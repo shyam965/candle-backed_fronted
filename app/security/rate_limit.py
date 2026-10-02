@@ -4,12 +4,13 @@ from __future__ import annotations
 
 import math
 import time
-from datetime import UTC, datetime
+from datetime import datetime
 
 from pymongo import ReturnDocument
 from pymongo.asynchronous.database import AsyncDatabase
 from pymongo.errors import DuplicateKeyError
 
+from app.core.documents import IST
 from app.core.errors import TooManyRequests
 
 
@@ -30,7 +31,7 @@ async def hit(db: AsyncDatabase, key: str, window: int) -> int:
         try:
             doc = await db.rate_limits.find_one_and_update(
                 {"_id": bucket},
-                {"$inc": {"count": 1}, "$setOnInsert": {"expiresAt": datetime.fromtimestamp(end, UTC)}},
+                {"$inc": {"count": 1}, "$setOnInsert": {"expiresAt": datetime.fromtimestamp(end, IST)}},
                 upsert=True,
                 return_document=ReturnDocument.AFTER,
             )

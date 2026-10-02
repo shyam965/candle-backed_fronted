@@ -7,7 +7,7 @@ from datetime import timedelta
 import pytest
 from bson import ObjectId
 
-from app.core.documents import new_meta, utcnow
+from app.core.documents import new_meta, now_ist
 from tests.helpers import API_ORIGIN, image_file, login_as
 
 KINDS = {
@@ -35,7 +35,7 @@ async def create(client, k, data, files=None):
 
 async def seed(db, k, title, order, status=True, minutes=0):
     doc = {"title": title, "subtitle": "", "image": f"/uploads/{title}.png", "buttonText": "Shop Now", "buttonLink": "/shop",
-           "order": order, "status": status, **new_meta(utcnow() - timedelta(minutes=minutes))}
+           "order": order, "status": status, **new_meta(now_ist() - timedelta(minutes=minutes))}
     if k["name"] == "promo":
         doc["background"] = "#08aaa6"
     await db[k["collection"]].insert_one(doc)

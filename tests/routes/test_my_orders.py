@@ -2,11 +2,10 @@
 
 from __future__ import annotations
 
-from datetime import timedelta
 
 from bson import ObjectId
 
-from app.core.documents import utcnow
+from app.core.documents import IST, now_ist
 from tests.helpers import login_as, make_order, make_product, make_user
 
 HX = {"HX-Request": "true"}
@@ -124,6 +123,6 @@ async def test_detail_anonymous_redirects_to_login(client, app):
 async def test_dates_rendered_in_ist(client, app):
     user = await login_as(client, app)
     order = await make_order(app.state.db, user)
-    created = order["createdAt"] + timedelta(hours=5, minutes=30)
+    created = order["createdAt"].astimezone(IST)
     text = (await client.get(f"/my-orders/{order['_id']}")).text
-    assert f"{created.day:02d} " in text and utcnow()
+    assert f"{created.day:02d} " in text and now_ist()

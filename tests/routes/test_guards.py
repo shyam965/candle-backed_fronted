@@ -7,7 +7,7 @@ from datetime import timedelta
 
 from fastapi.routing import APIRoute
 
-from app.core.documents import utcnow
+from app.core.documents import now_ist
 from app.security.csrf import api_origin_check, csrf_protect
 from app.security.deps import require_admin
 from app.security.sessions import hash_token
@@ -112,7 +112,7 @@ async def test_invalid_session_401(client):
 
 async def test_expired_session_401(client, app):
     await login_as(client, app)
-    await app.state.db.sessions.update_many({}, {"$set": {"expiresAt": utcnow() - timedelta(seconds=1)}})
+    await app.state.db.sessions.update_many({}, {"$set": {"expiresAt": now_ist() - timedelta(seconds=1)}})
     r = await client.get("/api/auth/me")
     assert r.status_code == 401 and r.json()["message"] == "Invalid or expired session"
 

@@ -28,7 +28,7 @@ async def test_create(client, app):
     data = r.json()["data"]
     assert data["name"] == "Jar Candles" and data["description"] == "Soy wax"
     assert re.fullmatch(r"/uploads/\d{13}-\d+\.png", data["image"])
-    assert data["__v"] == 0 and data["createdAt"].endswith("Z")
+    assert data["__v"] == 0 and data["createdAt"].endswith("+05:30")
     assert files_in(app) == [data["image"].rsplit("/", 1)[1]]
 
 

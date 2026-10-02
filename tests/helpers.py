@@ -12,7 +12,7 @@ from typing import Any
 from bson import ObjectId
 from httpx import AsyncClient
 
-from app.core.documents import new_meta, utcnow
+from app.core.documents import new_meta, now_ist
 from app.security.csrf import CSRF_COOKIE
 from app.security.passwords import hash_password_sync
 from app.security.sessions import SESSION_COOKIE, create_session
@@ -108,7 +108,7 @@ async def make_product(db, category: dict[str, Any] | None = None, name: str = "
 
 async def make_order(db, user: dict[str, Any], *, status: str = "Pending", products: list[dict[str, Any]] | None = None,
                      created_offset_minutes: int = 0, **extra: Any) -> dict[str, Any]:
-    now = utcnow() - timedelta(minutes=created_offset_minutes)
+    now = now_ist() - timedelta(minutes=created_offset_minutes)
     items = []
     for p in products or []:
         items.append({"product": p["_id"], "name": p["name"], "image": p["image"], "price": p["price"],

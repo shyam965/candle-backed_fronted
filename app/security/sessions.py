@@ -12,7 +12,7 @@ from fastapi.responses import Response
 from pymongo.asynchronous.database import AsyncDatabase
 
 from app.config import Settings
-from app.core.documents import utcnow
+from app.core.documents import now_ist
 
 SESSION_COOKIE = "akrf_session"
 
@@ -23,7 +23,7 @@ def hash_token(token: str) -> str:
 
 async def create_session(db: AsyncDatabase, user_id: ObjectId, settings: Settings) -> str:
     token = secrets.token_urlsafe(32)
-    now = utcnow()
+    now = now_ist()
     await db.sessions.insert_one(
         {
             "_id": hash_token(token),
@@ -40,7 +40,7 @@ async def get_session(db: AsyncDatabase, token: str) -> dict[str, Any] | None:
     if not token or len(token) > 200:
         return None
     session = await db.sessions.find_one({"_id": hash_token(token)})
-    if not session or session["expiresAt"] <= utcnow():
+    if not session or session["expiresAt"] <= now_ist():
         return None
     return session
 

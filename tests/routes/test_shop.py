@@ -6,7 +6,7 @@ import json
 import re
 from datetime import timedelta
 
-from app.core.documents import utcnow
+from app.core.documents import now_ist
 from tests.helpers import hx, login_as, make_category, make_product
 
 
@@ -19,7 +19,7 @@ async def seed(app):
     jars = await make_category(db, "Jar Candles")
     pillars = await make_category(db, "Pillar Candles")
     rose = await make_product(db, jars, name="Rose Jar", price=499, oldPrice=699, description="Floral soy",
-                              createdAt=utcnow() - timedelta(days=2))
+                              createdAt=now_ist() - timedelta(days=2))
     vanilla = await make_product(db, pillars, name="Vanilla Pillar", price=299, stock=0)
     return jars, pillars, rose, vanilla
 

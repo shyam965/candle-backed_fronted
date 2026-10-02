@@ -1,0 +1,10 @@
+# Runtime dependencies (mirrors pyproject.toml; versions = tested in .venv)
+fastapi==0.142.2
+uvicorn[standard]==0.54.0
+Jinja2==3.1.6
+python-multipart==0.0.32
+pymongo==4.18.2
+pydantic==2.13.5
+pydantic-settings==2.15.0
+bcrypt==5.0.0
+tzdata==2026.4

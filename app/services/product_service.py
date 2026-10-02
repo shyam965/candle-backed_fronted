@@ -10,7 +10,7 @@ from pymongo import ReturnDocument
 from pymongo.asynchronous.database import AsyncDatabase
 from pymongo.errors import DuplicateKeyError
 
-from app.core.documents import new_meta, num, touch, utcnow
+from app.core.documents import new_meta, num, touch, now_ist
 from app.core.errors import Conflict, NotFound, ValidationFailed
 from app.core.formatting import to_number
 from app.core.ids import parse_object_id
@@ -225,7 +225,7 @@ async def delete(db: AsyncDatabase, store: UploadStore, product_id: Any) -> dict
         raise NotFound(NOT_FOUND)
     await db.carts.update_many(
         {"items.product": oid},
-        {"$pull": {"items": {"product": oid}}, "$set": {"updatedAt": utcnow()}, "$inc": {"__v": 1}},
+        {"$pull": {"items": {"product": oid}}, "$set": {"updatedAt": now_ist()}, "$inc": {"__v": 1}},
     )
     await _release_image(db, store, deleted.get("image"))
     return deleted

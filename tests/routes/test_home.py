@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 from datetime import timedelta
 
-from app.core.documents import new_meta, utcnow
+from app.core.documents import new_meta, now_ist
 from tests.helpers import hx, make_category, make_product
 
 HX = {"HX-Request": "true"}
@@ -78,7 +78,7 @@ async def test_latest_eight_products(client, app):
     cat = await make_category(app.state.db)
     for i in range(10):
         await make_product(app.state.db, cat, name=f"Candle {i:02d}",
-                           createdAt=utcnow() - timedelta(days=10 - i), updatedAt=utcnow())
+                           createdAt=now_ist() - timedelta(days=10 - i), updatedAt=now_ist())
     text = (await client.get("/_p/home/products", headers=HX)).text
     assert text.count("<article") == 8 and "Candle 09" in text and "Candle 01" not in text and "Candle 00" not in text
 

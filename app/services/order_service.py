@@ -11,7 +11,7 @@ from pymongo import ReturnDocument
 from pymongo.asynchronous.database import AsyncDatabase
 from pymongo.errors import DuplicateKeyError
 
-from app.core.documents import num, utcnow
+from app.core.documents import num, now_ist
 from app.core.errors import NotFound, ValidationFailed
 from app.core.formatting import to_number
 from app.core.ids import parse_object_id
@@ -41,12 +41,12 @@ CUSTOMER_LIMITS = {"name": 120, "mobile": 10, "address": 500, "city": 80, "pinco
 
 def generate_order_id(now: datetime | None = None) -> str:
     """`AKRF-<epoch ms>-<1000–9999>` (BR-23, FR-087)."""
-    now = now or utcnow()
+    now = now or now_ist()
     return f"AKRF-{int(now.timestamp() * 1000)}-{1000 + secrets.randbelow(9000)}"
 
 
 def expected_delivery(now: datetime) -> datetime:
-    """Order time + 72 hours, UTC arithmetic (BR-25, D-33)."""
+    """Order time + 72 hours, IST arithmetic (no DST) (BR-25, D-33)."""
     return now + timedelta(days=DELIVERY_DAYS)
 
 
@@ -140,7 +140,7 @@ async def build_lines(db: AsyncDatabase, requested: list[tuple[ObjectId, int]]) 
 
 
 def pending_from_lines(customer: dict[str, str], lines: list[dict[str, Any]], threshold: float) -> dict[str, Any]:
-    now = utcnow()
+    now = now_ist()
     return {"orderId": generate_order_id(now), "customer": customer, "items": lines,
             **summarize(lines, threshold), "createdAt": now}
 
@@ -196,7 +196,7 @@ async def cleanup_cart(db: AsyncDatabase, user_id: ObjectId, lines: list[dict[st
             items.append({**item, "quantity": remaining})
     if changed:
         await db.carts.update_one({"_id": cart["_id"]},
-                                  {"$set": {"items": items, "updatedAt": utcnow()}, "$inc": {"__v": 1}})
+                                  {"$set": {"items": items, "updatedAt": now_ist()}, "$inc": {"__v": 1}})
 
 
 async def create_from_pending(db: AsyncDatabase, user: dict[str, Any], pending: dict[str, Any],
@@ -211,7 +211,7 @@ async def create_from_pending(db: AsyncDatabase, user: dict[str, Any], pending: 
         quote = quoted[line["product"]]
         line.update(price=quote["price"], total=quote["total"], name=quote["name"], image=quote["image"])
     totals = summarize(lines, threshold)
-    doc = _order_doc(pending["orderId"], user["_id"], pending["customer"], lines, totals, utcnow())
+    doc = _order_doc(pending["orderId"], user["_id"], pending["customer"], lines, totals, now_ist())
     order = await _insert(db, doc)
     await cleanup_cart(db, user["_id"], lines)
     return order
@@ -241,7 +241,7 @@ async def create_from_items(db: AsyncDatabase, user: dict[str, Any], data: dict[
             raise ValidationFailed("Invalid order product data")
         requested.append((pid, qty))
     lines = await build_lines(db, requested)
-    now = utcnow()
+    now = now_ist()
     doc = _order_doc(generate_order_id(now), user["_id"], customer, lines, summarize(lines, threshold), now)
     order = await _insert(db, doc)
     await cleanup_cart(db, user["_id"], lines)
@@ -306,7 +306,7 @@ async def change_status(db: AsyncDatabase, order_id: Any, status: Any) -> dict[s
         raise NotFound("Order not found")
     current = order.get("status") or "Pending"
     check_transition(current, status)
-    now = utcnow()
+    now = now_ist()
     changes = apply_status(order, status, now)
     changes["updatedAt"] = now
     updated = await db.orders.find_one_and_update(

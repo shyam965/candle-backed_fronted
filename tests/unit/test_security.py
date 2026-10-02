@@ -10,7 +10,7 @@ import pytest
 from starlette.datastructures import FormData, Headers, UploadFile
 from starlette.responses import Response
 
-from app.core.documents import utcnow
+from app.core.documents import now_ist
 from app.core.errors import PayloadTooLarge, ValidationFailed
 from app.security.passwords import hash_password_sync, verify_password_sync
 from app.security.sessions import create_session, get_session, hash_token, set_session_cookie
@@ -65,7 +65,7 @@ async def test_session_expires_after_7_days(app):
     token = await create_session(db, user["_id"], app.state.settings)
     stored = await db.sessions.find_one({"_id": hash_token(token)})
     assert stored["expiresAt"] - stored["createdAt"] == timedelta(days=7)
-    await db.sessions.update_one({"_id": hash_token(token)}, {"$set": {"expiresAt": utcnow() - timedelta(seconds=1)}})
+    await db.sessions.update_one({"_id": hash_token(token)}, {"$set": {"expiresAt": now_ist() - timedelta(seconds=1)}})
     assert await get_session(db, token) is None
 
 

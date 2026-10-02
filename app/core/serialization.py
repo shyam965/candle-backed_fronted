@@ -7,12 +7,15 @@ from typing import Any
 
 from bson import ObjectId
 
+from app.core.documents import IST
+
 
 def iso_ms(value: datetime) -> str:
+    """ISO-8601 in IST with milliseconds, e.g. `2026-10-02T14:45:27.481+05:30` (stored values stay UTC)."""
     if value.tzinfo is None:
         value = value.replace(tzinfo=UTC)
-    value = value.astimezone(UTC)
-    return value.strftime("%Y-%m-%dT%H:%M:%S.") + f"{value.microsecond // 1000:03d}Z"
+    value = value.astimezone(IST)
+    return value.isoformat(timespec="milliseconds")
 
 
 def to_json(value: Any) -> Any:

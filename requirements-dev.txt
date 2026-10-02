@@ -1,0 +1,10 @@
+-r requirements.txt
+
+# Tests
+pytest==9.1.1
+pytest-asyncio==1.4.0
+httpx==0.28.1
+asgi-lifespan==2.1.0
+
+# UI review script (scripts/ui_review.py); run `playwright install chromium` after
+playwright==1.63.0

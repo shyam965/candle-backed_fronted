@@ -9,6 +9,7 @@ from pymongo.asynchronous.database import AsyncDatabase
 from pymongo.errors import OperationFailure, PyMongoError
 
 from app.config import Settings
+from app.core.documents import IST
 
 log = logging.getLogger("akrf.db")
 
@@ -34,7 +35,7 @@ class DatabaseUnavailable(RuntimeError):
 
 async def connect(settings: Settings) -> tuple[AsyncMongoClient, AsyncDatabase]:
     client: AsyncMongoClient = AsyncMongoClient(
-        settings.mongo_uri, tz_aware=True, serverSelectionTimeoutMS=settings.mongo_timeout_ms,
+        settings.mongo_uri, tz_aware=True, tzinfo=IST, serverSelectionTimeoutMS=settings.mongo_timeout_ms,
         appname="ak-royal-flames",
     )
     try:

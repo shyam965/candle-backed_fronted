@@ -17,7 +17,7 @@ from pymongo import AsyncMongoClient
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from app.core.documents import new_meta, utcnow  # noqa: E402
+from app.core.documents import new_meta, now_ist  # noqa: E402
 from app.db import ensure_indexes  # noqa: E402
 from app.security.passwords import hash_password_sync  # noqa: E402
 from app.services.order_service import STATUSES, generate_order_id  # noqa: E402
@@ -75,7 +75,7 @@ async def seed(uri: str, db_name: str, upload_dir: Path) -> None:
     specs += [("FESTIVE", "banner", 1400, 600), ("NEW SCENTS", "banner", 1400, 600), ("GIFTS", "promo", 400, 400),
               ("CALM", "promo", 400, 400), ("SALE", "promo", 400, 400)]
     images = await render_images(upload_dir, specs)
-    now = utcnow()
+    now = now_ist()
     cat_ids = []
     for i, (name, desc) in enumerate(CATEGORIES):
         cat_ids.append((await db.categories.insert_one({"name": name, "description": desc, "image": images[i],

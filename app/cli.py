@@ -12,7 +12,7 @@ import asyncio
 import sys
 
 from app.config import Settings, get_settings
-from app.core.documents import utcnow
+from app.core.documents import now_ist
 from app.db import connect
 from app.services.auth_service import normalize_email
 
@@ -21,7 +21,7 @@ async def set_role(settings: Settings, email: str, role: str) -> bool:
     client, db = await connect(settings)
     try:
         result = await db.users.update_one({"email": normalize_email(email)},
-                                           {"$set": {"role": role, "updatedAt": utcnow()}})
+                                           {"$set": {"role": role, "updatedAt": now_ist()}})
         return result.matched_count == 1
     finally:
         await client.close()

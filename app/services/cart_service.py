@@ -10,7 +10,7 @@ from pymongo import ReturnDocument
 from pymongo.asynchronous.database import AsyncDatabase
 from pymongo.errors import DuplicateKeyError
 
-from app.core.documents import new_meta, utcnow
+from app.core.documents import new_meta, now_ist
 from app.core.errors import NotFound, ValidationFailed
 from app.core.formatting import to_number
 from app.core.ids import parse_object_id
@@ -21,7 +21,7 @@ CART_NOT_FOUND_LINE = "Product not found in cart"
 
 
 def _changed() -> dict[str, Any]:
-    return {"$set": {"updatedAt": utcnow()}, "$inc": {"__v": 1}}
+    return {"$set": {"updatedAt": now_ist()}, "$inc": {"__v": 1}}
 
 
 async def count_items(db: AsyncDatabase, user: dict[str, Any]) -> int:

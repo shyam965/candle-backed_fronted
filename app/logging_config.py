@@ -4,6 +4,9 @@ from __future__ import annotations
 
 import contextvars
 import logging
+from datetime import datetime
+
+from app.core.documents import IST
 
 request_id_var: contextvars.ContextVar[str] = contextvars.ContextVar("request_id", default="-")
 
@@ -22,9 +25,9 @@ def configure_logging(level: str = "INFO") -> None:
     handler = logging.StreamHandler()
     handler._akrf = True  # type: ignore[attr-defined]
     handler.addFilter(RequestIdFilter())
-    handler.setFormatter(
-        logging.Formatter("%(asctime)s %(levelname)s [%(request_id)s] %(name)s: %(message)s")
-    )
+    formatter = logging.Formatter("%(asctime)s %(levelname)s [%(request_id)s] %(name)s: %(message)s")
+    formatter.converter = lambda ts: datetime.fromtimestamp(ts, IST).timetuple()  # log times in IST
+    handler.setFormatter(formatter)
     root.addHandler(handler)
     root.setLevel(level.upper())
     logging.getLogger("pymongo").setLevel(logging.WARNING)

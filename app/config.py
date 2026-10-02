@@ -18,8 +18,8 @@ BASE_DIR = Path(__file__).resolve().parent
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 
-    app_env: Literal["development", "production", "test"] = "development"
-    app_base_url: str = "http://localhost:9000"
+    app_env: Literal["development", "production", "test"] = "production"
+    app_base_url: str = "https://akroyalflames.avigronix.com"
     port: int = 9000
 
     mongo_uri: str

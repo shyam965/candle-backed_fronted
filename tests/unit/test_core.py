@@ -81,7 +81,7 @@ def test_objectid_and_datetime():
     oid = ObjectId()
     dt = datetime(2026, 10, 2, 9, 15, 27, 481000, tzinfo=UTC)
     out = to_json({"_id": oid, "at": dt, "list": [{"d": dt}], "n": None})
-    assert out == {"_id": str(oid), "at": "2026-10-02T09:15:27.481Z", "list": [{"d": "2026-10-02T09:15:27.481Z"}], "n": None}
+    assert out == {"_id": str(oid), "at": "2026-10-02T14:45:27.481+05:30", "list": [{"d": "2026-10-02T14:45:27.481+05:30"}], "n": None}
 
 
 # ---------- formatting (FR-UI-041/042/093/128) ----------

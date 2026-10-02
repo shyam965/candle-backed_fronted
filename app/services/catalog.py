@@ -3,15 +3,16 @@
 from __future__ import annotations
 
 from collections import Counter
-from datetime import UTC, datetime
+from datetime import datetime
 from typing import Any
 
+from app.core.documents import IST
 from app.core.formatting import to_number
 from app.core.ids import parse_object_id
 from app.services.product_service import category_name
 
 SORTS = {"default": "Featured", "low": "Price: Low to High", "high": "Price: High to Low", "name": "Name: A to Z"}
-_EPOCH = datetime(1970, 1, 1, tzinfo=UTC)
+_EPOCH = datetime(1970, 1, 1, 5, 30, tzinfo=IST)
 
 
 def _created(product: dict[str, Any]) -> datetime:

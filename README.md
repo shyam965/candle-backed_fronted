@@ -23,7 +23,7 @@ python scripts/build_css.py      # builds app/static/css/app.css
 
 | Name | Purpose / default |
 |---|---|
-| `APP_ENV` | `development` \| `production` \| `test` (default `development`) |
+| `APP_ENV` | `development` \| `production` \| `test` (default `production`) |
 | `APP_BASE_URL` | Public origin, e.g. `https://akroyalflames.in`; used for the API origin check |
 | `PORT` | Listen port for `python -m app` (default `9000`) |
 | `MONGO_URI` | MongoDB connection string |
