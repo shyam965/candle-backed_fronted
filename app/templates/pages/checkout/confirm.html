@@ -1,0 +1,73 @@
+{% extends "layouts/site.html" %}
+{% from "components/icons.html" import icon %}
+{% block title %}Confirm WhatsApp Order — AK Royal Flames{% endblock %}
+{% block content %}
+{% set c = pending.customer %}
+<section class="container-page max-w-4xl py-8 sm:py-12">
+  <a href="/cart" class="inline-flex items-center gap-2 text-sm font-semibold text-royal-700 hover:text-flame-700">{{ icon("arrow-left", "h-4 w-4") }} Back to Cart</a>
+  <div class="mt-4">
+    <h1 class="text-3xl font-bold sm:text-4xl">WhatsApp Order</h1>
+    <p class="mt-2 text-royal-600">Please make sure you have sent the order details on WhatsApp.</p>
+  </div>
+
+  <div class="alert alert-success mt-6">
+    {{ icon("whatsapp", "h-5 w-5 shrink-0 mt-0.5") }}
+    <div>
+      <p class="font-semibold">Did you send the WhatsApp message?</p>
+      <p>Order ID <span class="font-semibold">{{ pending.orderId }}</span>. Once you've sent it, tap “I Have Sent WhatsApp Order” to save your order. If WhatsApp didn't open, use “Send WhatsApp Again”.</p>
+    </div>
+  </div>
+
+  <div class="mt-6 grid gap-6 lg:grid-cols-5">
+    <div class="flex flex-col gap-6 lg:col-span-3">
+      <div class="card card-pad">
+        <h2 class="font-display text-xl font-bold">Customer Details</h2>
+        <dl class="mt-4 grid gap-3 text-sm sm:grid-cols-2">
+          {% for label, value in [("Name", c.name), ("Mobile", c.mobile), ("City", c.city), ("Pincode", c.pincode)] %}
+          <div><dt class="text-royal-600">{{ label }}</dt><dd class="font-semibold">{{ value or "-" }}</dd></div>
+          {% endfor %}
+          <div class="sm:col-span-2"><dt class="text-royal-600">Address</dt><dd class="font-semibold">{{ c.address or "-" }}</dd></div>
+          {% if c.message %}<div class="sm:col-span-2"><dt class="text-royal-600">Order Note</dt><dd class="font-semibold">{{ c.message }}</dd></div>{% endif %}
+        </dl>
+      </div>
+      <div class="card card-pad">
+        <h2 class="font-display text-xl font-bold">Ordered Products</h2>
+        <ul class="mt-4 divide-y divide-cream-200">
+          {% for item in pending["items"] %}
+          <li class="flex items-center justify-between gap-4 py-3 text-sm">
+            <div>
+              <p class="font-semibold text-royal-900">{{ item.name }}</p>
+              <p class="text-royal-600">Qty: {{ item.quantity }} × {{ item.price|inr }}</p>
+            </div>
+            <p class="font-semibold">{{ item.total|inr }}</p>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+    <aside class="lg:col-span-2">
+      <div class="card card-pad lg:sticky lg:top-28">
+        <h2 class="font-display text-xl font-bold">Order Summary</h2>
+        <dl class="mt-4 flex flex-col gap-3 text-sm">
+          <div class="flex justify-between"><dt class="text-royal-600">Items Total</dt><dd class="font-semibold">{{ pending.itemsTotal|inr }}</dd></div>
+          <div class="flex justify-between"><dt class="text-royal-600">Shipping</dt>
+            <dd class="font-semibold {{ 'text-emerald-700' if pending.shippingStatus == 'FREE' else 'text-amber-700' }}">{{ "FREE" if pending.shippingStatus == "FREE" else "Pay Separately" }}</dd></div>
+          <div class="flex items-baseline justify-between border-t border-cream-300 pt-3"><dt class="font-semibold">Grand Total</dt>
+            <dd class="font-display text-2xl font-bold">{{ pending.grandTotal|inr }}</dd></div>
+        </dl>
+        <div id="confirm-actions" class="mt-6 flex flex-col gap-3">
+          <button type="button" class="btn btn-primary btn-lg w-full" hx-post="/whatsapp-confirm" hx-swap="none"
+                  hx-disabled-elt="#confirm-actions button, #confirm-actions a">
+            <span class="htmx-hide-on-request">{{ icon("check-circle", "h-5 w-5") }}</span>
+            <span class="htmx-indicator">{{ icon("loader", "h-5 w-5 animate-spin") }}</span>
+            <span class="htmx-hide-on-request">I Have Sent WhatsApp Order</span><span class="htmx-indicator">Placing Order...</span>
+          </button>
+          <a href="{{ resend_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-whatsapp w-full">{{ icon("whatsapp", "h-5 w-5") }} Send WhatsApp Again</a>
+          <a href="/cart" class="btn btn-outline w-full">I Haven't Sent It</a>
+        </div>
+        <p class="mt-4 text-center text-xs text-royal-600">Your cart will be updated only after the order is successfully confirmed.</p>
+      </div>
+    </aside>
+  </div>
+</section>
+{% endblock %}

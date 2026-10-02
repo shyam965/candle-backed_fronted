@@ -1,0 +1,49 @@
+{% from "components/icons.html" import icon %}
+{% from "components/ui.html" import error_state, image_or_placeholder %}
+<div id="home-banners">
+{% if load_error %}
+  {{ error_state(load_error, "/_p/home/banners", "#home-banners") }}
+{% elif not banners %}
+  <div class="flex aspect-[4/5] items-center justify-center rounded-3xl border border-dashed border-royal-200 bg-white/60 text-royal-600 sm:aspect-[21/9]">No banners available</div>
+{% else %}
+  <div class="relative overflow-hidden rounded-3xl bg-royal-950 shadow-[var(--shadow-lift)]" data-slider data-interval="4000"
+       role="region" aria-roledescription="carousel" aria-label="Featured banners">
+    <div class="relative aspect-[4/5] sm:aspect-[21/9]">
+      {% for banner in banners %}
+      <div class="absolute inset-0 transition-opacity duration-700 {{ 'opacity-100' if loop.first else 'opacity-0 pointer-events-none' }}"
+           data-slide role="group" aria-roledescription="slide" aria-label="{{ loop.index }} of {{ banners|length }}"
+           aria-hidden="{{ 'false' if loop.first else 'true' }}">
+        {{ image_or_placeholder(banner.image, banner.title or ("Candle banner " ~ loop.index), "h-full w-full object-cover") }}
+        <div class="absolute inset-0 bg-gradient-to-t from-royal-950/85 via-royal-950/35 to-transparent sm:bg-gradient-to-r sm:from-royal-950/80 sm:via-royal-950/30"></div>
+        <div class="absolute inset-x-0 bottom-0 flex flex-col gap-3 p-6 sm:inset-y-0 sm:max-w-xl sm:justify-center sm:p-12">
+          {% if banner.title %}<h2 class="font-display text-3xl font-bold leading-tight text-white sm:text-5xl">{{ banner.title }}</h2>{% endif %}
+          {% if banner.subtitle %}<p class="text-base text-cream-200 sm:text-lg">{{ banner.subtitle }}</p>{% endif %}
+          {% if banner.title %}
+          <a href="{{ banner.buttonLink|cta_href }}" class="btn btn-accent btn-lg mt-2 w-fit"{% if not loop.first %} tabindex="-1"{% endif %}>{{ banner.buttonText or "Shop Now" }} {{ icon("chevron-right", "h-4 w-4") }}</a>
+          {% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% if banners|length > 1 %}
+    <button type="button" class="icon-btn absolute left-3 top-1/2 -translate-y-1/2 bg-white/85 text-royal-900 hover:bg-white" data-slider-prev aria-label="Previous banner">{{ icon("chevron-left") }}</button>
+    <button type="button" class="icon-btn absolute right-3 top-1/2 -translate-y-1/2 bg-white/85 text-royal-900 hover:bg-white" data-slider-next aria-label="Next banner">{{ icon("chevron-right") }}</button>
+    {% endif %}
+    <div class="absolute inset-x-0 bottom-3 flex justify-center gap-2">
+      {% for banner in banners %}
+      <button type="button" class="h-2.5 w-2.5 rounded-full {{ 'bg-white' if loop.first else 'bg-white/50' }} transition" data-slider-dot="{{ loop.index0 }}"
+              aria-label="Show banner {{ loop.index }}" aria-current="{{ 'true' if loop.first else 'false' }}"></button>
+      {% endfor %}
+    </div>
+  </div>
+{% endif %}
+</div>
+<div id="home-mid-banner" hx-swap-oob="true">
+{% if banners %}
+  {% set first = banners[0] %}
+  <a href="{{ first.buttonLink|cta_href }}" class="block overflow-hidden rounded-3xl shadow-[var(--shadow-soft)] transition hover:shadow-[var(--shadow-lift)]"
+     aria-label="{{ first.title or 'Featured offer' }}">
+    <div class="aspect-[16/7] sm:aspect-[21/7]">{{ image_or_placeholder(first.image, first.title or "Featured offer") }}</div>
+  </a>
+{% endif %}
+</div>

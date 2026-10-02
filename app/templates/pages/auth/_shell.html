@@ -1,0 +1,26 @@
+{% extends "layouts/site.html" %}
+{% from "components/icons.html" import icon %}
+{% block content %}
+<section class="container-page py-10 sm:py-16">
+  <div class="mx-auto grid max-w-5xl overflow-hidden rounded-3xl border border-cream-300 bg-white shadow-[var(--shadow-lift)] lg:grid-cols-2">
+    <div class="relative hidden overflow-hidden bg-gradient-to-br from-royal-900 via-royal-800 to-royal-950 p-10 text-white lg:flex lg:flex-col lg:justify-between">
+      <div aria-hidden="true" class="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-flame-500/20 blur-3xl"></div>
+      <div aria-hidden="true" class="absolute -bottom-32 -left-20 h-80 w-80 rounded-full bg-flame-300/10 blur-3xl"></div>
+      <p class="eyebrow relative text-flame-200">AK Royal Flames</p>
+      <div class="relative">
+        <span class="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-white/10 text-flame-200">{{ icon("flame", "h-7 w-7") }}</span>
+        <h2 class="font-display text-3xl font-bold leading-tight text-white">{% block side_title %}{% endblock %}</h2>
+        <p class="mt-3 max-w-sm text-royal-100">{% block side_text %}{% endblock %}</p>
+      </div>
+      <ul class="relative flex flex-col gap-3 text-sm text-royal-100">
+        <li class="flex items-center gap-3">{{ icon("sparkles", "h-4 w-4 text-flame-300") }} Hand-poured in small batches</li>
+        <li class="flex items-center gap-3">{{ icon("whatsapp", "h-4 w-4 text-flame-300") }} Easy ordering over WhatsApp</li>
+        <li class="flex items-center gap-3">{{ icon("truck", "h-4 w-4 text-flame-300") }} Free delivery on orders of ₹{{ settings.free_delivery_threshold|int }} or more</li>
+      </ul>
+    </div>
+    <div class="p-6 sm:p-10">
+      {% block form %}{% endblock %}
+    </div>
+  </div>
+</section>
+{% endblock %}

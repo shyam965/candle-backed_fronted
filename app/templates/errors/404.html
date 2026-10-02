@@ -1,0 +1,4 @@
+{% extends "errors/error.html" %}
+{% block error_icon %}{{ icon("flame", "h-8 w-8") }}{% endblock %}
+{% block heading %}This flame has gone out{% endblock %}
+{% block text %}{{ message or "We couldn't find the page you were looking for. It may have moved or no longer exists." }}{% endblock %}

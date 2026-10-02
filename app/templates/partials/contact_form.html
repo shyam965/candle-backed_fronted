@@ -1,0 +1,22 @@
+{% from "components/ui.html" import input, textarea %}
+{% from "components/icons.html" import icon %}
+<form id="contact-form" action="/contact" method="post" class="grid gap-5 sm:grid-cols-2" novalidate
+      hx-post="/contact" hx-target="this" hx-swap="outerHTML" hx-disabled-elt="find button[type=submit]">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+  {% if whatsapp_url %}
+  <div class="sm:col-span-2 alert alert-success" role="status">
+    {{ icon("whatsapp", "h-5 w-5 shrink-0") }}
+    <p>WhatsApp is opening in a new tab. If it didn't open, <a href="{{ whatsapp_url }}" target="_blank" rel="noopener noreferrer" class="font-semibold underline">tap here to send your message</a>.</p>
+  </div>
+  {% endif %}
+  {{ input("name", "Full Name", values.name, required=True, autocomplete="name", maxlength=120, errors=errors) }}
+  {{ input("email", "Email Address", values.email, type="email", required=True, autocomplete="email", maxlength=254, errors=errors) }}
+  {{ input("phone", "Phone Number", values.phone, type="tel", autocomplete="tel", inputmode="numeric", maxlength=15, errors=errors, attrs='data-digits="15"') }}
+  {{ input("subject", "Subject", values.subject, required=True, maxlength=150, errors=errors) }}
+  <div class="sm:col-span-2">{{ textarea("message", "Your Message", values.message, required=True, rows=5, maxlength=1000, errors=errors) }}</div>
+  <div class="sm:col-span-2">
+    <button type="submit" class="btn btn-whatsapp btn-lg w-full sm:w-auto">
+      {{ icon("send", "h-4 w-4") }}<span class="htmx-hide-on-request">Send via WhatsApp</span><span class="htmx-indicator">Opening WhatsApp...</span>
+    </button>
+  </div>
+</form>

@@ -1,0 +1,60 @@
+{% extends "layouts/site.html" %}
+{% from "components/icons.html" import icon %}
+{% block title %}About Us — AK Royal Flames{% endblock %}
+{% block content %}
+<section class="relative overflow-hidden bg-gradient-to-br from-royal-900 via-royal-800 to-royal-950 text-white">
+  <div aria-hidden="true" class="absolute -right-24 top-0 h-80 w-80 rounded-full bg-flame-500/20 blur-3xl"></div>
+  <div class="container-page relative py-16 text-center sm:py-24">
+    <p class="eyebrow text-flame-200">About AK Royal Flames</p>
+    <h1 class="mx-auto mt-3 max-w-3xl text-4xl font-bold text-white sm:text-5xl">Handcrafted candles that bring warmth to every home</h1>
+    <p class="mx-auto mt-5 max-w-2xl text-royal-100">We pour every candle by hand, choosing fragrances and designs that turn ordinary evenings into moments worth remembering.</p>
+    <a href="/shop" class="btn btn-accent btn-lg mt-8">Explore Collection {{ icon("chevron-right", "h-4 w-4") }}</a>
+  </div>
+</section>
+
+<section class="container-page grid items-center gap-10 py-16 lg:grid-cols-2">
+  <div class="overflow-hidden rounded-3xl shadow-[var(--shadow-lift)]">
+    <img src="{{ static_url('img/art-candles.svg') }}" alt="Three hand-poured AK Royal Flames candles glowing" class="aspect-[4/3] w-full object-cover">
+  </div>
+  <div>
+    <p class="eyebrow">Our Story</p>
+    <h2 class="section-title mt-2">Born from a love of light and fragrance</h2>
+    <div class="mt-5 space-y-4 text-royal-700">
+      <p>AK Royal Flames began with a simple idea: a candle should do more than light a room — it should set a mood, carry a memory and make a space feel like home.</p>
+      <p>Every candle is hand-poured in small batches with premium wax and carefully balanced fragrances, then finished with designs that look as beautiful unlit as they do glowing.</p>
+    </div>
+  </div>
+</section>
+
+<section class="bg-white py-16">
+  <div class="container-page grid gap-10 lg:grid-cols-2">
+    <div>
+      <p class="eyebrow">Our Mission</p>
+      <h2 class="section-title mt-2">Small joys, thoughtfully made</h2>
+    </div>
+    <p class="text-lg leading-relaxed text-royal-700">Our mission is to create candles that are beautiful, long-lasting and made with care — perfect for gifting, celebrations and quiet evenings alike — while keeping ordering simple and personal through WhatsApp.</p>
+  </div>
+  <div class="container-page mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+    {% for ic, title, text in [
+      ("heart", "Made With Love", "Each candle is poured and finished by hand with attention to every detail."),
+      ("leaf", "Quality Materials", "Premium wax, clean-burning wicks and long-lasting fragrance oils."),
+      ("award", "Premium Collection", "Signature scents and festive editions curated for every occasion."),
+      ("palette", "Beautiful Designs", "Elegant jars and pillars that elevate any corner of your home."),
+    ] %}
+    <article class="card card-pad">
+      <span class="flex h-12 w-12 items-center justify-center rounded-2xl bg-flame-50 text-flame-700">{{ icon(ic, "h-6 w-6") }}</span>
+      <h3 class="mt-4 font-display text-lg font-bold">{{ title }}</h3>
+      <p class="mt-2 text-sm text-royal-600">{{ text }}</p>
+    </article>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="container-page py-16">
+  <div class="flex flex-col items-center gap-6 rounded-3xl bg-gradient-to-r from-flame-700 to-flame-600 px-6 py-12 text-center text-white sm:px-12">
+    <h2 class="font-display text-3xl font-bold text-white">Ready to find your perfect glow?</h2>
+    <p class="max-w-xl text-flame-50">Browse our full collection of handmade candles and order in minutes over WhatsApp.</p>
+    <a href="/shop" class="btn btn-lg bg-white text-flame-800 hover:bg-flame-50">Shop Now</a>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,5 @@
+{% from "components/icons.html" import icon %}
+{% macro status_pill(status, size="") -%}
+{% set style = status_style(status) %}
+<span class="badge {{ style[0] }} {{ 'px-3 py-1 text-sm' if size == 'lg' else '' }}">{{ icon(style[1], "h-3.5 w-3.5") }} {{ status }}</span>
+{%- endmacro %}

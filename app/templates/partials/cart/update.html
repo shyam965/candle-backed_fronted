@@ -1,0 +1,7 @@
+{# Response to a cart line action: new line list + out-of-band summary, selected count and header badge. #}
+{% include "partials/cart/lines.html" %}
+{% with oob=True %}
+{% include "partials/cart/summary.html" %}
+{% include "partials/cart/selected_count.html" %}
+{% include "partials/header_cart_badge.html" %}
+{% endwith %}

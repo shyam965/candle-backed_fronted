@@ -1,0 +1,19 @@
+{% from "components/ui.html" import input, textarea, alert %}
+{% from "components/icons.html" import icon %}
+<div id="customer-details" class="card card-pad scroll-mt-40">
+  <h2 class="font-display text-xl font-bold">Delivery Details</h2>
+  <p class="mt-1 text-sm text-royal-600">We'll use these details to deliver your order.</p>
+  <form id="delivery-form" class="mt-5 grid gap-4 sm:grid-cols-2" novalidate
+        hx-post="/cart/checkout" hx-target="#customer-details" hx-swap="outerHTML"
+        hx-disabled-elt="#place-order-btn, #place-order-mobile, find button">
+    {% if form_error %}<div class="sm:col-span-2">{{ alert(form_error, "error") }}</div>{% endif %}
+    <div class="sm:col-span-2">{{ input("name", "Full Name", values.name, required=True, placeholder="Enter your full name", autocomplete="name", maxlength=120, errors=errors, id="d-name") }}</div>
+    {{ input("mobile", "Mobile Number", values.mobile, type="tel", required=True, placeholder="10 digit mobile number", autocomplete="tel-national",
+             inputmode="numeric", maxlength=10, errors=errors, id="d-mobile", attrs='data-digits="10"') }}
+    {{ input("pincode", "Pincode", values.pincode, required=True, placeholder="6 digit pincode", autocomplete="postal-code",
+             inputmode="numeric", maxlength=6, errors=errors, id="d-pincode", attrs='data-digits="6"') }}
+    <div class="sm:col-span-2">{{ textarea("address", "Complete Address", values.address, required=True, rows=3, placeholder="House/Flat No., Street, Area...", maxlength=500, errors=errors, id="d-address") }}</div>
+    {{ input("city", "City", values.city, required=True, placeholder="Your city", autocomplete="address-level2", maxlength=80, errors=errors, id="d-city") }}
+    <div class="sm:col-span-2">{{ textarea("message", "Order Note (Optional)", values.message, rows=2, placeholder="Any special instruction?", maxlength=500, errors=errors, id="d-message") }}</div>
+  </form>
+</div>

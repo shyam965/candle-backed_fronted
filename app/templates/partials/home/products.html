@@ -1,0 +1,12 @@
+{% from "components/ui.html" import error_state %}
+<div id="home-products">
+{% if load_error %}
+  {{ error_state(load_error, "/_p/home/products", "#home-products") }}
+{% elif not products %}
+  <p class="rounded-2xl border border-dashed border-royal-200 bg-white/60 py-10 text-center text-royal-600">No products available yet.</p>
+{% else %}
+  <div class="grid grid-cols-1 gap-5 min-[420px]:grid-cols-2 lg:grid-cols-4">
+    {% for product in products %}{% with source="home" %}{% include "partials/product_card.html" %}{% endwith %}{% endfor %}
+  </div>
+{% endif %}
+</div>

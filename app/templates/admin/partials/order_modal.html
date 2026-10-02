@@ -1,0 +1,75 @@
+{% from "components/icons.html" import icon %}
+{% from "components/ui.html" import image_or_placeholder %}
+{% from "admin/partials/order_status_select.html" import status_select %}
+<div id="modal-body" class="flex max-h-[calc(100vh-2rem)] flex-col"{% if oob %} hx-swap-oob="true"{% endif %}>
+  {% set c = order.customer or {} %}
+  <div class="flex items-center justify-between gap-4 border-b border-cream-300 px-5 py-4">
+    <div class="min-w-0">
+      <p class="text-xs text-royal-600">Order</p>
+      <h2 id="modal-title" class="truncate font-display text-xl font-bold">{{ order.orderId or order._id }}</h2>
+    </div>
+    <button type="button" class="icon-btn" data-modal-close aria-label="Close order details" autofocus>{{ icon("x") }}</button>
+  </div>
+  <div class="overflow-y-auto px-5 py-5">
+    <div class="grid gap-3 text-sm sm:grid-cols-2">
+      <div class="rounded-xl bg-cream-100 p-3"><p class="text-royal-600">Order Received</p><p class="font-semibold">{{ order.createdAt|datetime }}</p></div>
+      <div class="rounded-xl bg-cream-100 p-3"><p class="text-royal-600">Expected Delivery</p><p class="font-semibold">{{ order.expectedDelivery|date }}</p></div>
+    </div>
+
+    <div class="mt-5 grid gap-5 lg:grid-cols-2">
+      <section>
+        <h3 class="font-sans text-sm font-semibold uppercase tracking-wide text-royal-700">Customer Details</h3>
+        <div class="mt-2 text-sm leading-relaxed">
+          <p class="font-semibold">{{ c.name or "-" }}</p>
+          <p>{{ c.mobile or "-" }}</p>
+          <p>{{ c.address or "-" }}</p>
+          <p>{{ c.city or "-" }} - {{ c.pincode or "-" }}</p>
+        </div>
+        <h3 class="mt-5 font-sans text-sm font-semibold uppercase tracking-wide text-royal-700">Current Order Status</h3>
+        <div class="mt-2">{{ status_select(order, "modal") }}</div>
+      </section>
+      <section>
+        <h3 class="font-sans text-sm font-semibold uppercase tracking-wide text-royal-700">Order Timeline</h3>
+        <ol class="mt-2 flex flex-col gap-2">
+          {% for entry in admin_timeline(order) %}
+          <li class="flex items-start justify-between gap-3 rounded-lg px-3 py-2 text-sm {{ 'bg-flame-50 ring-1 ring-flame-200' if entry.current else 'bg-cream-50' }}">
+            <span class="font-medium">{{ entry.label }}{% if entry.current %} <span class="badge badge-royal ml-1">Current</span>{% endif %}</span>
+            <span class="text-right text-xs text-royal-600">{{ entry.date|datetime if entry.date else entry.missing }}</span>
+          </li>
+          {% endfor %}
+        </ol>
+      </section>
+    </div>
+
+    <section class="mt-6">
+      <h3 class="font-sans text-sm font-semibold uppercase tracking-wide text-royal-700">Products</h3>
+      <ul class="mt-2 divide-y divide-cream-200 rounded-xl border border-cream-300">
+        {% for item in order["items"] %}
+        <li class="flex items-center gap-3 p-3 text-sm">
+          <div class="h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-cream-200">{{ image_or_placeholder(item.image, item.name, ph_icon="package") }}</div>
+          <div class="min-w-0 flex-1">
+            <p class="font-semibold">{{ item.name }}</p>
+            <p class="text-xs text-royal-600">Qty: {{ item.quantity }} · Price: {{ item.price|inr }}</p>
+          </div>
+          <p class="font-semibold">{{ (item.total if item.total is not none else ((item.price|num or 0) * (item.quantity|num or 0)))|inr }}</p>
+        </li>
+        {% endfor %}
+      </ul>
+    </section>
+
+    <dl class="mt-5 flex flex-col gap-2 rounded-xl bg-cream-100 p-4 text-sm">
+      <div class="flex justify-between"><dt class="text-royal-600">Items Total</dt><dd class="font-semibold">{{ order.itemsTotal|inr }}</dd></div>
+      <div class="flex justify-between"><dt class="text-royal-600">Shipping</dt><dd class="font-semibold">{{ "FREE" if order.shippingStatus == "FREE" else "Pay Separately" }}</dd></div>
+      <div class="flex justify-between border-t border-cream-300 pt-2"><dt class="font-semibold">Grand Total</dt><dd class="font-display text-lg font-bold">{{ order.grandTotal|inr }}</dd></div>
+    </dl>
+
+    {% if c.message %}
+    <section class="mt-5 alert alert-info">{{ icon("info", "h-5 w-5 shrink-0") }}<div><p class="font-semibold">Customer Note</p><p>{{ c.message }}</p></div></section>
+    {% endif %}
+
+    <div class="mt-5 grid gap-3 text-xs text-royal-600 sm:grid-cols-2">
+      <p>Order Date: <span class="font-semibold text-royal-900">{{ order.createdAt|datetime }}</span></p>
+      <p>Expected Delivery: <span class="font-semibold text-royal-900">{{ order.expectedDelivery|date }}</span></p>
+    </div>
+  </div>
+</div>

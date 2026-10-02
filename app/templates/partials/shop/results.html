@@ -1,0 +1,31 @@
+{% from "components/icons.html" import icon %}
+<div id="shop-results" aria-live="polite">
+  <div class="mb-5 flex flex-wrap items-end justify-between gap-3">
+    <div>
+      <h2 class="font-display text-2xl font-bold">{{ heading }}</h2>
+      <p class="text-sm text-royal-600">{{ "Loading products..." if products is not defined and not products_error else ((products|length if products is defined else 0) ~ " products found") }}</p>
+    </div>
+    <a href="/cart" class="badge badge-royal px-3 py-1.5 text-sm">{{ icon("cart", "h-4 w-4") }} {{ cart_count or 0 }} in cart</a>
+  </div>
+  {% if products_error %}
+    <div class="alert alert-error items-center justify-between" role="alert">
+      <span>{{ products_error }}</span>
+      <a href="{{ shop_url(category=params.category, search=params.search, sort=params.sort) }}" class="btn btn-sm btn-danger-outline">Retry</a>
+    </div>
+  {% elif not products %}
+    <div class="flex flex-col items-center gap-3 rounded-3xl border border-dashed border-royal-200 bg-white/60 px-6 py-14 text-center">
+      <span class="flex h-14 w-14 items-center justify-center rounded-full bg-flame-50 text-flame-700">{{ icon("search", "h-7 w-7") }}</span>
+      <h3 class="font-display text-xl font-bold">No Candles Found</h3>
+      <p class="text-sm text-royal-600">Try another search or category.</p>
+      <a href="/shop" class="btn btn-primary mt-2">View All Candles</a>
+    </div>
+  {% else %}
+    <div class="grid grid-cols-1 gap-5 min-[420px]:grid-cols-2 xl:grid-cols-3">
+      {% for product in products %}{% with source="shop" %}{% include "partials/product_card.html" %}{% endwith %}{% endfor %}
+    </div>
+  {% endif %}
+</div>
+{% if oob %}
+{% include "partials/shop/categories.html" %}
+<input type="hidden" id="shop-category-input" name="category" value="{{ params.category }}" hx-swap-oob="true">
+{% endif %}

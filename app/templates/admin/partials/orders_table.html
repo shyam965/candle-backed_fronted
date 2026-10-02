@@ -1,0 +1,29 @@
+{% from "components/icons.html" import icon %}
+{% from "components/ui.html" import error_state, pagination %}
+{% if load_error %}
+  {{ error_state(load_error, "/admin/orders/_table", "#orders-panel", "innerHTML") }}
+{% else %}
+  {% with oob=True %}{% include "admin/partials/orders_stats.html" %}{% endwith %}
+  {% if not orders %}
+  <div class="card flex flex-col items-center gap-2 px-5 py-14 text-center">
+    <span class="flex h-12 w-12 items-center justify-center rounded-full bg-flame-50 text-flame-700">{{ icon("receipt", "h-6 w-6") }}</span>
+    <p class="font-semibold text-royal-900">No orders found</p>
+    <p class="text-sm text-royal-600">Try changing your search or status filter.</p>
+  </div>
+  {% else %}
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr><th scope="col">Order</th><th scope="col">Customer</th><th scope="col">Products</th><th scope="col">Total</th>
+            <th scope="col">Status</th><th scope="col">Order Date</th><th scope="col">Expected Delivery</th><th scope="col">Action</th></tr>
+      </thead>
+      <tbody class="divide-y divide-cream-200">
+        {% for order in orders %}{% include "admin/partials/order_row.html" %}{% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% set extra = "&q=" ~ (filters.q|urlencode) ~ "&status=" ~ filters.status %}
+  {{ pagination(page, pages, "/admin/orders/_table", "#orders-panel", extra) }}
+  <p class="mt-2 text-xs text-royal-600">{{ total }} order(s) match.</p>
+  {% endif %}
+{% endif %}

@@ -1,0 +1,19 @@
+{% from "components/ui.html" import error_state, image_or_placeholder %}
+<div id="home-categories">
+{% if load_error %}
+  {{ error_state(load_error, "/_p/home/categories", "#home-categories") }}
+{% elif not categories %}
+  <p class="rounded-2xl border border-dashed border-royal-200 bg-white/60 py-10 text-center text-royal-600">No categories available yet.</p>
+{% else %}
+  <ul class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+    {% for category in categories %}
+    <li>
+      <a href="/shop?category={{ category._id }}" class="group block overflow-hidden rounded-2xl border border-cream-300 bg-white shadow-[var(--shadow-soft)] transition hover:-translate-y-0.5 hover:shadow-[var(--shadow-lift)]">
+        <div class="aspect-square overflow-hidden bg-cream-200">{{ image_or_placeholder(category.image, category.name, "h-full w-full object-cover transition duration-500 group-hover:scale-105", "cart") }}</div>
+        <p class="px-3 py-3 text-center text-sm font-semibold text-royal-900">{{ category.name }}</p>
+      </a>
+    </li>
+    {% endfor %}
+  </ul>
+{% endif %}
+</div>

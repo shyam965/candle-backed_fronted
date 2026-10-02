@@ -1,0 +1,48 @@
+{% from "components/icons.html" import icon %}
+{% from "components/ui.html" import error_state %}
+{% from "components/status_pill.html" import status_pill %}
+<div id="dashboard-recent" class="mt-8"{% if oob %} hx-swap-oob="true"{% endif %}>
+{% if recent_error %}
+  {{ error_state(recent_error, "/admin/_p/recent-orders", "#dashboard-recent") }}
+{% else %}
+  <div class="card overflow-hidden">
+    <div class="flex items-center justify-between border-b border-cream-300 p-5">
+      <div>
+        <h2 class="font-display text-xl font-bold">Recent Orders</h2>
+        <p class="text-sm text-royal-600">The five newest orders</p>
+      </div>
+      <span class="badge badge-royal">{{ orders_total }} Total</span>
+    </div>
+    {% if not recent %}
+    <div class="flex flex-col items-center gap-2 px-5 py-12 text-center">
+      <span class="flex h-12 w-12 items-center justify-center rounded-full bg-flame-50 text-flame-700">{{ icon("receipt", "h-6 w-6") }}</span>
+      <p class="font-semibold">No orders yet</p>
+      <p class="text-sm text-royal-600">Customer orders will appear here.</p>
+    </div>
+    {% else %}
+    <div class="overflow-x-auto">
+      <table class="table">
+        <thead><tr><th scope="col">Order</th><th scope="col">Customer</th><th scope="col">Items</th><th scope="col">Amount</th><th scope="col">Status</th><th scope="col">Date</th></tr></thead>
+        <tbody class="divide-y divide-cream-200">
+          {% for order in recent %}
+          {% set c = order.customer or {} %}
+          {% set u = order.user or {} %}
+          <tr>
+            <td class="font-semibold">{{ order.orderId or (order._id|string)[-8:] }}</td>
+            <td>
+              <p class="font-medium">{{ c.name or u.name or "-" }}</p>
+              <p class="text-xs text-royal-600">{{ c.mobile or c.phone or u.phone or "-" }}</p>
+            </td>
+            <td>{{ item_count(order) }} Items</td>
+            <td class="font-semibold">{{ order.grandTotal|inr }}</td>
+            <td>{{ status_pill(order.status or "Pending") }}</td>
+            <td class="whitespace-nowrap text-xs">{{ order.createdAt|datetime }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% endif %}
+  </div>
+{% endif %}
+</div>

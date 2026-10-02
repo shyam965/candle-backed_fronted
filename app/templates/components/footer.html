@@ -1,0 +1,52 @@
+{% from "components/icons.html" import icon %}
+{% from "components/logo.html" import logo %}
+{% set wa_footer = "https://api.whatsapp.com/send?phone=" ~ settings.whatsapp_number ~ "&text=" ~ ("Hello AK Royal Flames, I would like to know more about your candles."|urlencode) %}
+<footer class="mt-16 bg-royal-950 text-royal-100">
+  <div class="container-page grid gap-10 py-12 sm:grid-cols-2 lg:grid-cols-4">
+    <div class="flex flex-col gap-4">
+      <a href="/" class="w-fit rounded-lg" aria-label="AK Royal Flames home">{{ logo("light") }}</a>
+      <p class="text-sm leading-relaxed text-royal-200">Hand-poured candles crafted with love, premium wax and beautiful fragrances to light up every moment.</p>
+      <div>
+        <p class="mb-2 text-sm font-semibold text-white">Follow Us</p>
+        <div class="flex gap-2">
+          <a href="{{ settings.instagram_url }}" class="icon-btn text-royal-100 hover:bg-royal-800 hover:text-white" target="_blank" rel="noopener noreferrer" aria-label="Instagram">{{ icon("instagram") }}</a>
+          <a href="{{ settings.facebook_url }}" class="icon-btn text-royal-100 hover:bg-royal-800 hover:text-white" target="_blank" rel="noopener noreferrer" aria-label="Facebook">{{ icon("facebook") }}</a>
+          <a href="{{ wa_footer }}" class="icon-btn text-royal-100 hover:bg-royal-800 hover:text-white" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">{{ icon("whatsapp") }}</a>
+        </div>
+        <p class="mt-2 text-xs text-royal-300">{{ settings.instagram_handle }}</p>
+      </div>
+    </div>
+
+    <nav aria-label="Quick links">
+      <h2 class="mb-4 font-sans text-sm font-semibold uppercase tracking-wider text-white">Quick Links</h2>
+      <ul class="flex flex-col gap-2.5 text-sm">
+        <li><a href="/" class="hover:text-flame-300">Home</a></li>
+        <li><a href="/shop" class="hover:text-flame-300">Shop All Candles</a></li>
+        <li><a href="/about" class="hover:text-flame-300">About Us</a></li>
+        <li><a href="/contact" class="hover:text-flame-300">Contact Us</a></li>
+        <li><a href="/cart" class="hover:text-flame-300">Shopping Cart</a></li>
+      </ul>
+    </nav>
+
+    <div>
+      <h2 class="mb-4 font-sans text-sm font-semibold uppercase tracking-wider text-white">Contact Us</h2>
+      <ul class="flex flex-col gap-3 text-sm">
+        <li class="flex gap-2.5">{{ icon("map-pin", "mt-0.5 h-4 w-4 shrink-0 text-flame-300") }}<span>{{ settings.business_address }}</span></li>
+        <li class="flex gap-2.5">{{ icon("phone", "mt-0.5 h-4 w-4 shrink-0 text-flame-300") }}<a href="tel:+{{ settings.whatsapp_number }}" class="hover:text-flame-300">{{ settings.business_phone }}</a></li>
+        <li class="flex gap-2.5">{{ icon("whatsapp", "mt-0.5 h-4 w-4 shrink-0 text-flame-300") }}<a href="{{ wa_footer }}" target="_blank" rel="noopener noreferrer" class="hover:text-flame-300">Chat on WhatsApp</a></li>
+        <li class="flex gap-2.5">{{ icon("mail", "mt-0.5 h-4 w-4 shrink-0 text-flame-300") }}<a href="mailto:{{ settings.business_email }}" class="break-all hover:text-flame-300">{{ settings.business_email }}</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <h2 class="mb-4 font-sans text-sm font-semibold uppercase tracking-wider text-white">Stay Connected</h2>
+      <p class="text-sm leading-relaxed text-royal-200">Follow us for new launches, festive collections and candle care tips. Questions about an order? Message us on WhatsApp any time.</p>
+    </div>
+  </div>
+  <div class="border-t border-royal-800">
+    <div class="container-page flex flex-col items-center justify-between gap-2 py-5 text-center text-xs text-royal-300 sm:flex-row sm:text-left">
+      <p class="font-display text-sm italic text-flame-200">Light up your moments with AK Royal Flames</p>
+      <p>© {{ now_year }} AK Royal Flames. All rights reserved. · Made with ♥ for candle lovers</p>
+    </div>
+  </div>
+</footer>

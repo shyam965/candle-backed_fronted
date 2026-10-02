@@ -1,0 +1,13 @@
+{% extends "pages/auth/_shell.html" %}
+{% block title %}Login — AK Royal Flames{% endblock %}
+{% block side_title %}Welcome back to the glow{% endblock %}
+{% block side_text %}Sign in to manage your cart, place WhatsApp orders and track every delivery.{% endblock %}
+{% block form %}
+<h1 class="text-3xl font-bold">Login</h1>
+<p class="mt-2 text-sm text-royal-600">Good to see you again. Enter your details to continue.</p>
+<div class="mt-8">{% include "partials/auth/login_form.html" %}</div>
+<p class="mt-6 text-center text-sm text-royal-600">
+  Don't have an account?
+  <a href="/register{% if redirect %}?redirect={{ redirect|urlencode }}{% endif %}" class="font-semibold text-flame-700 underline-offset-4 hover:underline">Create Account</a>
+</p>
+{% endblock %}

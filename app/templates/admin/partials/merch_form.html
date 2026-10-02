@@ -1,0 +1,40 @@
+{% from "components/ui.html" import input, image_input %}
+<div id="merch-form" class="card">
+  <div class="border-b border-cream-300 p-5">
+    <h2 id="merch-form-title" class="font-display text-xl font-bold">{{ cfg.form_title }}</h2>
+    <p class="text-sm text-royal-600">Upload an image and set the call-to-action button.</p>
+  </div>
+  <form class="grid gap-4 p-5" novalidate hx-post="{{ cfg.base }}" hx-encoding="multipart/form-data"
+        hx-target="#merch-form" hx-swap="outerHTML" hx-disabled-elt="find button[type=submit]">
+    {{ input("title", "Title", values.title, required=True, placeholder=cfg.title_placeholder, maxlength=120, errors=errors) }}
+    {{ input("subtitle", "Subtitle", values.subtitle, placeholder=cfg.subtitle_placeholder, maxlength=200, errors=errors) }}
+    <div class="grid gap-4 sm:grid-cols-2">
+      {{ input("buttonText", "Button Text", values.buttonText, maxlength=40, errors=errors) }}
+      {{ input("buttonLink", "Button Link", values.buttonLink, placeholder="/shop", maxlength=500,
+               hint="Use a site path like /shop or a full https:// link.", errors=errors) }}
+    </div>
+    <div class="grid gap-4 sm:grid-cols-2">
+      {{ input("order", "Display Order", values.order, type="number", step="1", inputmode="numeric", errors=errors) }}
+      {% if cfg.kind.has_background %}
+      <div class="field">
+        <label for="f-background" class="label">Background Colour</label>
+        <div class="flex items-center gap-3">
+          <input id="f-background" name="background" type="color" value="{{ values.background|safe_color }}"
+                 class="h-11 w-16 cursor-pointer rounded-xl border border-royal-200 bg-white p-1">
+          <span class="text-sm text-royal-600">Card background</span>
+        </div>
+        {% if errors.background %}<p class="field-error">{{ errors.background }}</p>{% endif %}
+      </div>
+      {% endif %}
+    </div>
+    <div class="flex items-center gap-3 rounded-xl bg-cream-100 px-4 py-3">
+      <input type="hidden" name="status" value="false">
+      <input id="f-status" name="status" type="checkbox" value="true" class="h-5 w-5 rounded accent-flame-700"{% if values.status == "true" %} checked{% endif %}>
+      <label for="f-status" class="text-sm font-medium text-royal-900">Active (show on storefront)</label>
+    </div>
+    {{ image_input("Image", errors=errors, required=True, id="merch-image") }}
+    <button type="submit" class="btn btn-primary w-full">
+      <span class="htmx-hide-on-request">{{ cfg.submit_label }}</span><span class="htmx-indicator">Uploading...</span>
+    </button>
+  </form>
+</div>

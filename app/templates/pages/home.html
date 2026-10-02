@@ -1,0 +1,78 @@
+{% extends "layouts/site.html" %}
+{% from "components/icons.html" import icon %}
+{% from "components/ui.html" import skeleton_rows %}
+{% block content %}
+<h1 class="sr-only">AK Royal Flames — Handmade Candles</h1>
+
+<section aria-label="Featured banners" class="container-page pt-4 sm:pt-6">
+  <div id="home-banners" hx-get="/_p/home/banners" hx-trigger="load" hx-swap="outerHTML">
+    <div class="skeleton aspect-[4/5] w-full rounded-3xl sm:aspect-[21/9]"></div>
+  </div>
+</section>
+
+<section aria-label="Offers" class="container-page pt-8">
+  <div id="home-promo-cards" hx-get="/_p/home/promo-cards" hx-trigger="load" hx-swap="outerHTML">
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {% for _ in range(3) %}<div class="skeleton h-40"></div>{% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="container-page pt-16" aria-labelledby="shop-by-category">
+  <div class="mb-6 flex items-end justify-between gap-4">
+    <div>
+      <p class="eyebrow">Collections</p>
+      <h2 id="shop-by-category" class="section-title mt-1">Shop by Category</h2>
+    </div>
+    <a href="/shop" class="btn btn-ghost btn-sm">View All {{ icon("chevron-right", "h-4 w-4") }}</a>
+  </div>
+  <div id="home-categories" hx-get="/_p/home/categories" hx-trigger="load" hx-swap="outerHTML">
+    <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5" aria-busy="true">
+      {% for _ in range(10) %}<div class="skeleton aspect-square"></div>{% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="container-page pt-16" aria-labelledby="collection-title">
+  <div class="mb-6 flex items-end justify-between gap-4">
+    <div>
+      <p class="eyebrow">Fresh from the studio</p>
+      <h2 id="collection-title" class="section-title mt-1">Our Candle Collection</h2>
+    </div>
+    <a href="/shop" class="btn btn-outline btn-sm hidden sm:inline-flex">View All Products</a>
+  </div>
+  <div id="home-products" hx-get="/_p/home/products" hx-trigger="load" hx-swap="outerHTML">
+    <div class="grid grid-cols-1 gap-5 min-[420px]:grid-cols-2 lg:grid-cols-4" aria-busy="true">
+      {% for _ in range(8) %}<div class="skeleton h-96"></div>{% endfor %}
+    </div>
+  </div>
+  <div class="mt-8 text-center"><a href="/shop" class="btn btn-primary">View All Products</a></div>
+</section>
+
+<section class="container-page pt-16" aria-label="Featured offer">
+  <div id="home-mid-banner"></div>
+</section>
+
+<section class="container-page pt-16" aria-labelledby="video-title">
+  <div class="grid items-center gap-8 overflow-hidden rounded-3xl bg-royal-950 p-6 text-white sm:p-10 lg:grid-cols-2">
+    <div>
+      <p class="eyebrow text-flame-200">Behind the glow</p>
+      <h2 id="video-title" class="mt-2 font-display text-3xl font-bold text-white">Hand-poured with care</h2>
+      <p class="mt-3 text-royal-100">From melting the wax to placing the wick, every AK Royal Flames candle is made by hand in small batches.</p>
+    </div>
+    <div class="aspect-video overflow-hidden rounded-2xl bg-royal-900">
+      <iframe class="h-full w-full" src="https://www.youtube.com/embed/{{ settings.youtube_video_id }}?autoplay=1&mute=1&loop=1&playlist={{ settings.youtube_video_id }}&start=0&end=60&controls=0&rel=0&playsinline=1"
+              title="AK Royal Flames candle making video" loading="lazy" allow="autoplay; encrypted-media; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+    </div>
+  </div>
+</section>
+
+<section class="container-page py-16">
+  <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-flame-700 via-flame-600 to-flame-500 px-6 py-12 text-center text-white sm:px-12">
+    <div aria-hidden="true" class="absolute -right-10 -top-10 h-48 w-48 rounded-full bg-white/10"></div>
+    <h2 class="font-display text-3xl font-bold text-white">Join Our Candle Making Community</h2>
+    <p class="mx-auto mt-3 max-w-xl text-flame-50">Discover new scents, seasonal collections and gifting ideas crafted to make every moment glow.</p>
+    <a href="/shop" class="btn btn-lg mt-7 bg-white text-flame-800 hover:bg-flame-50">Explore Now</a>
+  </div>
+</section>
+{% endblock %}

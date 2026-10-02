@@ -1,0 +1,31 @@
+{% from "components/icons.html" import icon %}
+{% from "components/ui.html" import empty_state %}
+<div id="cart-root">
+{% if not lines %}
+  <section class="container-page py-16">
+    {% if pending_order %}<div class="mx-auto mb-6 max-w-2xl">{% include "partials/cart/pending_banner.html" %}</div>{% endif %}
+    {{ empty_state("Your Cart Is Empty", "Add your favourite candles to continue.", "cart", "/shop", "Continue Shopping") }}
+  </section>
+{% else %}
+  <div class="sticky top-16 z-30 border-b border-cream-300 bg-cream-50/95 backdrop-blur md:top-20">
+    <div class="container-page flex items-center gap-3 py-3">
+      <a href="/shop" class="icon-btn" data-back aria-label="Go back">{{ icon("arrow-left") }}</a>
+      <div>
+        <h1 class="font-display text-xl font-bold sm:text-2xl">My Cart</h1>
+        {% include "partials/cart/selected_count.html" %}
+      </div>
+    </div>
+  </div>
+  <section class="container-page grid gap-6 pb-32 pt-6 lg:grid-cols-3 lg:pb-10">
+    <div class="flex flex-col gap-6 lg:col-span-2">
+      {% if pending_order %}{% include "partials/cart/pending_banner.html" %}{% endif %}
+      {% include "partials/cart/lines.html" %}
+      {% include "partials/cart/delivery_form.html" %}
+    </div>
+    <aside class="lg:col-span-1">
+      <div class="lg:sticky lg:top-40">{% include "partials/cart/summary.html" %}</div>
+    </aside>
+  </section>
+  {% include "partials/cart/mobile_bar.html" %}
+{% endif %}
+</div>

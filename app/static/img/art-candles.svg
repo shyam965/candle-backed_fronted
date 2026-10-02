@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 360" role="img" aria-label="Three lit handmade candles">
+  <defs>
+    <radialGradient id="glow" cx="50%" cy="38%" r="60%">
+      <stop offset="0" stop-color="#faecd6"/>
+      <stop offset="0.6" stop-color="#f4d5a8" stop-opacity=".45"/>
+      <stop offset="1" stop-color="#fdfaf5" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3a2443"/>
+      <stop offset="1" stop-color="#241529"/>
+    </linearGradient>
+    <linearGradient id="f" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0" stop-color="#bf641c"/>
+      <stop offset=".55" stop-color="#e39a44"/>
+      <stop offset="1" stop-color="#fff3df"/>
+    </linearGradient>
+    <linearGradient id="jar" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#f7f0e4"/>
+      <stop offset=".5" stop-color="#fffdf9"/>
+      <stop offset="1" stop-color="#eee2cd"/>
+    </linearGradient>
+    <linearGradient id="wax2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#c2a8d2"/>
+      <stop offset="1" stop-color="#85599b"/>
+    </linearGradient>
+    <linearGradient id="wax3" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ecb870"/>
+      <stop offset="1" stop-color="#bf641c"/>
+    </linearGradient>
+  </defs>
+  <rect width="480" height="360" fill="url(#bg)"/>
+  <circle cx="240" cy="150" r="190" fill="url(#glow)" opacity=".55"/>
+  <ellipse cx="240" cy="318" rx="200" ry="14" fill="#000" opacity=".25"/>
+  <!-- left pillar -->
+  <rect x="88" y="190" width="70" height="125" rx="10" fill="url(#wax2)"/>
+  <ellipse cx="123" cy="190" rx="35" ry="8" fill="#dccde6"/>
+  <rect x="121.5" y="170" width="3" height="18" rx="1.5" fill="#241529"/>
+  <path d="M123 128c6 12 15 18 15 31a15 15 0 0 1-30 0c0-7 3-11 7-15 1 5 3 8 6 8-2-7-1-15 2-24z" fill="url(#f)"/>
+  <!-- centre jar -->
+  <rect x="190" y="150" width="100" height="165" rx="18" fill="url(#jar)" stroke="#eee2cd" stroke-width="2"/>
+  <rect x="190" y="215" width="100" height="56" fill="#4b3057"/>
+  <text x="240" y="248" text-anchor="middle" font-family="Georgia, serif" font-size="15" fill="#f4d5a8" letter-spacing="1">AK ROYAL</text>
+  <rect x="238.5" y="128" width="3" height="20" rx="1.5" fill="#241529"/>
+  <path d="M240 72c8 15 19 23 19 39a19 19 0 0 1-38 0c0-9 4-14 9-19 1 6 4 10 8 10-3-9-1-19 2-30z" fill="url(#f)"/>
+  <!-- right pillar -->
+  <rect x="322" y="215" width="70" height="100" rx="10" fill="url(#wax3)"/>
+  <ellipse cx="357" cy="215" rx="35" ry="8" fill="#f4d5a8"/>
+  <rect x="355.5" y="196" width="3" height="17" rx="1.5" fill="#241529"/>
+  <path d="M357 156c6 11 14 17 14 29a14 14 0 0 1-28 0c0-6 3-10 6-14 1 5 3 7 6 7-2-6-1-14 2-22z" fill="url(#f)"/>
+  <g fill="#faecd6" opacity=".7">
+    <circle cx="60" cy="70" r="2"/><circle cx="420" cy="60" r="2.5"/><circle cx="400" cy="130" r="1.5"/>
+    <circle cx="80" cy="140" r="1.5"/><circle cx="300" cy="40" r="1.8"/><circle cx="170" cy="50" r="1.2"/>
+  </g>
+</svg>

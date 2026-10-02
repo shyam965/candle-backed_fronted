@@ -1,0 +1,156 @@
+{% from "components/icons.html" import icon %}
+
+{# Text-like input with label, hint, inline error, and preserved value. #}
+{% macro input(name, label, value="", type="text", errors=None, required=False, placeholder="", hint=None,
+               autocomplete=None, inputmode=None, maxlength=None, min=None, step=None, id=None, attrs="") -%}
+{% set fid = id or ("f-" ~ name) %}
+{% set err = (errors or {}).get(name) %}
+<div class="field">
+  <label for="{{ fid }}" class="label">{{ label }}{% if required %} <span class="text-flame-700" aria-hidden="true">*</span>{% endif %}</label>
+  <input id="{{ fid }}" name="{{ name }}" type="{{ type }}" value="{{ value if value is not none else '' }}"
+         class="input{% if err %} input-error{% endif %}"
+         {%- if placeholder %} placeholder="{{ placeholder }}"{% endif %}
+         {%- if required %} required aria-required="true"{% endif %}
+         {%- if autocomplete %} autocomplete="{{ autocomplete }}"{% endif %}
+         {%- if inputmode %} inputmode="{{ inputmode }}"{% endif %}
+         {%- if maxlength %} maxlength="{{ maxlength }}"{% endif %}
+         {%- if min is not none %} min="{{ min }}"{% endif %}
+         {%- if step %} step="{{ step }}"{% endif %}
+         {%- if err %} aria-invalid="true" aria-describedby="{{ fid }}-error"{% elif hint %} aria-describedby="{{ fid }}-hint"{% endif %}
+         data-clear-error="{{ fid }}-error" {{ attrs|safe }}>
+  {% if hint and not err %}<p id="{{ fid }}-hint" class="hint">{{ hint }}</p>{% endif %}
+  <p id="{{ fid }}-error" class="field-error"{% if not err %} hidden{% endif %}>{{ err or "" }}</p>
+</div>
+{%- endmacro %}
+
+{% macro textarea(name, label, value="", errors=None, required=False, placeholder="", rows=3, maxlength=None, hint=None, id=None) -%}
+{% set fid = id or ("f-" ~ name) %}
+{% set err = (errors or {}).get(name) %}
+<div class="field">
+  <label for="{{ fid }}" class="label">{{ label }}{% if required %} <span class="text-flame-700" aria-hidden="true">*</span>{% endif %}</label>
+  <textarea id="{{ fid }}" name="{{ name }}" rows="{{ rows }}" class="input{% if err %} input-error{% endif %}"
+            {%- if placeholder %} placeholder="{{ placeholder }}"{% endif %}
+            {%- if required %} required aria-required="true"{% endif %}
+            {%- if maxlength %} maxlength="{{ maxlength }}"{% endif %}
+            {%- if err %} aria-invalid="true" aria-describedby="{{ fid }}-error"{% elif hint %} aria-describedby="{{ fid }}-hint"{% endif %}
+            data-clear-error="{{ fid }}-error">{{ value if value is not none else '' }}</textarea>
+  {% if hint and not err %}<p id="{{ fid }}-hint" class="hint">{{ hint }}</p>{% endif %}
+  <p id="{{ fid }}-error" class="field-error"{% if not err %} hidden{% endif %}>{{ err or "" }}</p>
+</div>
+{%- endmacro %}
+
+{% macro select(name, label, options, value="", errors=None, required=False, placeholder=None, id=None, attrs="") -%}
+{% set fid = id or ("f-" ~ name) %}
+{% set err = (errors or {}).get(name) %}
+<div class="field">
+  <label for="{{ fid }}" class="label">{{ label }}{% if required %} <span class="text-flame-700" aria-hidden="true">*</span>{% endif %}</label>
+  <select id="{{ fid }}" name="{{ name }}" class="input{% if err %} input-error{% endif %}"
+          {%- if required %} required aria-required="true"{% endif %}
+          {%- if err %} aria-invalid="true" aria-describedby="{{ fid }}-error"{% endif %}
+          data-clear-error="{{ fid }}-error" {{ attrs|safe }}>
+    {% if placeholder %}<option value="">{{ placeholder }}</option>{% endif %}
+    {% for opt_value, opt_label in options %}
+    <option value="{{ opt_value }}"{% if opt_value|string == value|string %} selected{% endif %}>{{ opt_label }}</option>
+    {% endfor %}
+  </select>
+  <p id="{{ fid }}-error" class="field-error"{% if not err %} hidden{% endif %}>{{ err or "" }}</p>
+</div>
+{%- endmacro %}
+
+{% macro alert(message, kind="error", title=None) -%}
+<div class="alert alert-{{ kind }}" role="{{ 'alert' if kind == 'error' else 'status' }}">
+  {{ icon("alert" if kind in ("error", "warning") else "check-circle" if kind == "success" else "info", "h-5 w-5 shrink-0 mt-0.5") }}
+  <div>
+    {% if title %}<p class="font-semibold">{{ title }}</p>{% endif %}
+    <p>{{ message }}</p>
+  </div>
+</div>
+{%- endmacro %}
+
+{% macro empty_state(title, text=None, icon_name="package", action_url=None, action_label=None) -%}
+<div class="flex flex-col items-center justify-center gap-3 rounded-[var(--radius-card)] border border-dashed border-royal-200 bg-white/60 px-6 py-12 text-center">
+  <span class="flex h-14 w-14 items-center justify-center rounded-full bg-flame-50 text-flame-700">{{ icon(icon_name, "h-7 w-7") }}</span>
+  <h3 class="font-display text-xl font-bold text-royal-900">{{ title }}</h3>
+  {% if text %}<p class="max-w-md text-sm text-royal-600">{{ text }}</p>{% endif %}
+  {% if action_url %}<a href="{{ action_url }}" class="btn btn-primary mt-2">{{ action_label }}</a>{% endif %}
+  {{ caller() if caller else "" }}
+</div>
+{%- endmacro %}
+
+{# Error box with a Retry button that re-loads the given partial into `target`. #}
+{% macro error_state(message, retry_url, target, swap="outerHTML") -%}
+<div class="alert alert-error items-center justify-between" role="alert">
+  <div class="flex items-center gap-3">{{ icon("alert", "h-5 w-5 shrink-0") }}<span>{{ message }}</span></div>
+  <button type="button" class="btn btn-sm btn-danger-outline" hx-get="{{ retry_url }}" hx-target="{{ target }}" hx-swap="{{ swap }}">
+    {{ icon("refresh", "h-4 w-4") }} Retry
+  </button>
+</div>
+{%- endmacro %}
+
+{% macro spinner(cls="h-4 w-4") -%}{{ icon("loader", cls ~ " animate-spin") }}{%- endmacro %}
+
+{% macro pagination(page, pages, url, target, extra="") -%}
+{% if pages > 1 %}
+<nav class="mt-4 flex items-center justify-between gap-3 text-sm" aria-label="Pagination">
+  <p class="text-royal-600">Page <span class="font-semibold text-royal-900">{{ page }}</span> of {{ pages }}</p>
+  <div class="flex gap-2">
+    <button type="button" class="btn btn-sm btn-outline" {% if page <= 1 %}disabled{% endif %}
+            hx-get="{{ url }}?page={{ page - 1 }}{{ extra }}" hx-target="{{ target }}" hx-push-url="false">{{ icon("chevron-left", "h-4 w-4") }} Previous</button>
+    <button type="button" class="btn btn-sm btn-outline" {% if page >= pages %}disabled{% endif %}
+            hx-get="{{ url }}?page={{ page + 1 }}{{ extra }}" hx-target="{{ target }}" hx-push-url="false">Next {{ icon("chevron-right", "h-4 w-4") }}</button>
+  </div>
+</nav>
+{% endif %}
+{%- endmacro %}
+
+{# Image file input with live preview and client-side type/size checks (server re-validates, D-12). #}
+{% macro image_input(label, current=None, errors=None, required=False, hint=None, id="f-image") -%}
+{% set err = (errors or {}).get("image") %}
+<div class="field">
+  <span class="label" id="{{ id }}-label">{{ label }}{% if required %} <span class="text-flame-700" aria-hidden="true">*</span>{% endif %}</span>
+  <label for="{{ id }}" class="group relative flex cursor-pointer items-center gap-4 rounded-2xl border-2 border-dashed {{ 'border-red-400' if err else 'border-royal-200' }} bg-cream-50 p-4 transition hover:border-flame-400 focus-within:border-flame-500">
+    <span class="relative h-24 w-24 shrink-0 overflow-hidden rounded-xl bg-white ring-1 ring-cream-300">
+      <img id="{{ id }}-preview" src="{{ current|image_url }}" alt="Selected image preview" class="h-full w-full object-cover"{% if not (current|image_url) %} hidden{% endif %}>
+      <span id="{{ id }}-placeholder" class="absolute inset-0 flex items-center justify-center text-royal-400"{% if current|image_url %} hidden{% endif %}>{{ icon("image", "h-8 w-8") }}</span>
+    </span>
+    <span class="flex flex-col gap-1 text-sm">
+      <span class="font-semibold text-royal-900">{{ "Click to change image" if current else "Click to upload an image" }}</span>
+      <span class="text-xs text-royal-600">JPG, PNG or WebP · max {{ settings.max_upload_mb }} MB</span>
+    </span>
+    <input id="{{ id }}" name="image" type="file" accept="image/jpeg,image/png,image/webp" class="sr-only"
+           data-preview="#{{ id }}-preview" data-placeholder="#{{ id }}-placeholder" data-max-bytes="{{ settings.max_upload_bytes }}"
+           data-max-label="{{ settings.max_upload_mb }}" data-error="#{{ id }}-error" aria-labelledby="{{ id }}-label"
+           {%- if err %} aria-invalid="true" aria-describedby="{{ id }}-error"{% endif %}>
+  </label>
+  {% if hint %}<p class="hint">{{ hint }}</p>{% endif %}
+  <p id="{{ id }}-error" class="field-error"{% if not err %} hidden{% endif %}>{{ err or "" }}</p>
+</div>
+{%- endmacro %}
+
+{% macro page_header(title, subtitle=None) -%}
+<div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+  <div>
+    <h1 class="text-2xl font-bold sm:text-3xl">{{ title }}</h1>
+    {% if subtitle %}<p class="mt-1 text-sm text-royal-600">{{ subtitle }}</p>{% endif %}
+  </div>
+  {% if caller %}<div class="flex flex-wrap gap-2">{{ caller() }}</div>{% endif %}
+</div>
+{%- endmacro %}
+
+{% macro skeleton_rows(rows=5, cls="h-14") -%}
+<div class="flex flex-col gap-3" aria-busy="true" aria-label="Loading">
+  {% for _ in range(rows) %}<div class="skeleton {{ cls }} w-full"></div>{% endfor %}
+  <span class="sr-only">Loading...</span>
+</div>
+{%- endmacro %}
+
+{% macro image_or_placeholder(src, alt, cls="h-full w-full object-cover", ph_icon="flame") -%}
+{% set url = src|image_url %}
+{% if url %}
+<img src="{{ url }}" alt="{{ alt }}" class="{{ cls }}" loading="lazy" decoding="async" data-fallback>
+{% else %}
+<div class="flex h-full w-full items-center justify-center bg-gradient-to-br from-flame-50 to-royal-50 text-flame-600" role="img" aria-label="{{ alt }}">
+  {{ icon(ph_icon, "h-8 w-8") }}
+</div>
+{% endif %}
+{%- endmacro %}

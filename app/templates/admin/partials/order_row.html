@@ -1,0 +1,24 @@
+{% from "components/icons.html" import icon %}
+{% from "admin/partials/order_status_select.html" import status_select %}
+<tr id="order-row-{{ order._id }}"{% if oob %} hx-swap-oob="true"{% endif %}>
+  <td>
+    <p class="whitespace-nowrap font-mono text-xs font-semibold text-royal-900">{{ order.orderId or (order._id|string)[-8:] }}</p>
+    <p class="text-xs text-royal-600">{{ order.paymentMethod or "WhatsApp Order" }}</p>
+  </td>
+  <td>
+    <p class="whitespace-nowrap font-medium">{{ (order.customer or {}).name or "-" }}</p>
+    <p class="text-xs text-royal-600">{{ (order.customer or {}).mobile or "-" }}</p>
+  </td>
+  <td class="max-w-[13rem]">
+    <p class="font-medium">{{ order["items"]|length }} product(s)</p>
+    <p class="truncate text-xs text-royal-600" title="{{ order['items']|map(attribute='name')|join(', ') }}">{{ order["items"]|map(attribute="name")|join(", ") }}</p>
+  </td>
+  <td class="whitespace-nowrap font-semibold">{{ order.grandTotal|inr }}</td>
+  <td>{{ status_select(order) }}</td>
+  <td class="whitespace-nowrap text-xs">{{ order.createdAt|datetime }}</td>
+  <td class="whitespace-nowrap text-xs">{{ order.expectedDelivery|date }}</td>
+  <td>
+    <button type="button" class="btn btn-outline btn-sm" hx-get="/admin/orders/{{ order._id }}" hx-target="#modal" hx-swap="innerHTML"
+            aria-haspopup="dialog">{{ icon("eye", "h-4 w-4") }} View</button>
+  </td>
+</tr>

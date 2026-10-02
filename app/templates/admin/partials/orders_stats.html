@@ -1,0 +1,16 @@
+{% from "components/icons.html" import icon %}
+<div id="orders-stats" class="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5"{% if oob %} hx-swap-oob="true"{% endif %}>
+  {% set total = stats.values()|sum %}
+  {% for label, value, ic, tone in [
+    ("Total Orders", total, "receipt", "bg-royal-100 text-royal-800"),
+    ("Pending", stats.Pending, "clock", "bg-amber-100 text-amber-800"),
+    ("Processing", stats.Processing, "package", "bg-royal-100 text-royal-800"),
+    ("Delivered", stats.Delivered, "check-circle", "bg-emerald-100 text-emerald-800"),
+    ("Cancelled", stats.Cancelled, "x-circle", "bg-red-100 text-red-800"),
+  ] %}
+  <div class="card flex items-center gap-3 p-4">
+    <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl {{ tone }}">{{ icon(ic, "h-5 w-5") }}</span>
+    <div><p class="text-xs text-royal-600">{{ label }}</p><p class="font-display text-2xl font-bold">{{ value }}</p></div>
+  </div>
+  {% endfor %}
+</div>

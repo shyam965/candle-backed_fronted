@@ -1,0 +1,37 @@
+{% from "components/icons.html" import icon %}
+<div id="cart-summary" class="card card-pad"{% if oob %} hx-swap-oob="true"{% endif %}>
+  <h2 class="font-display text-xl font-bold">Order Summary</h2>
+  <dl class="mt-4 flex flex-col gap-3 text-sm">
+    <div class="flex justify-between"><dt class="text-royal-600">Items ({{ totals.selected_quantity }})</dt><dd class="font-semibold">{{ totals.items_total|inr }}</dd></div>
+    <div class="flex justify-between">
+      <dt class="text-royal-600">Delivery</dt>
+      <dd class="font-semibold {{ 'text-emerald-700' if totals.free_shipping else 'text-amber-700' }}">{{ "FREE" if totals.free_shipping else "Pay Separately" }}</dd>
+    </div>
+  </dl>
+  {% if totals.free_shipping %}
+  <div class="alert alert-success mt-4">{{ icon("check-circle", "h-5 w-5 shrink-0") }}
+    <div><p class="font-semibold">🎉 FREE delivery applied</p><p>Your order value is {{ settings.free_delivery_threshold|inr }} or above.</p></div>
+  </div>
+  {% else %}
+  <div class="alert alert-warning mt-4">{{ icon("truck", "h-5 w-5 shrink-0") }}
+    <div>
+      <p class="font-semibold">Delivery charges not included</p>
+      <p>Actual delivery charges will be paid separately to the delivery person at the time of delivery.</p>
+      {% if totals.items_total > 0 %}<p class="mt-1 font-semibold">Add {{ totals.amount_for_free|inr }} more to get FREE delivery</p>{% endif %}
+    </div>
+  </div>
+  {% endif %}
+  <div class="mt-4 flex items-baseline justify-between border-t border-cream-300 pt-4">
+    <span class="font-semibold">Grand Total</span>
+    <span class="font-display text-2xl font-bold text-royal-900">{{ totals.grand_total|inr }}</span>
+  </div>
+  {% if not totals.free_shipping %}<p class="mt-2 text-xs text-royal-600">*Grand Total does not include delivery charge.</p>{% endif %}
+  <button type="submit" form="delivery-form" id="place-order-btn" class="btn btn-whatsapp btn-lg mt-5 hidden w-full lg:inline-flex"
+          {% if totals.selected_quantity == 0 %}aria-disabled="true"{% endif %}>
+    {{ icon("whatsapp", "h-5 w-5") }}<span class="htmx-hide-on-request">Place Order on WhatsApp</span><span class="htmx-indicator">Processing...</span>
+  </button>
+  <p class="mt-3 hidden text-center text-xs text-royal-600 lg:block">Your order details will be saved and sent to AK Royal Flames WhatsApp.</p>
+</div>
+{% if oob %}
+<div id="mobile-grand-total" hx-swap-oob="true" class="font-display text-xl font-bold text-royal-900">{{ totals.grand_total|inr }}</div>
+{% endif %}

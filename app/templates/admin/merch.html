@@ -1,0 +1,20 @@
+{% extends "layouts/admin.html" %}
+{% from "components/ui.html" import page_header, skeleton_rows %}
+{% block admin_title %}{{ cfg.page_title }}{% endblock %}
+{% block content %}
+{{ page_header(cfg.page_title, "Shown on the storefront home page in display order.") }}
+<div class="grid gap-6 xl:grid-cols-5">
+  <section class="xl:col-span-2" aria-labelledby="merch-form-title">
+    {% include "admin/partials/merch_form.html" %}
+  </section>
+  <section class="xl:col-span-3" aria-labelledby="merch-list-title">
+    <div id="merch-list" hx-get="{{ cfg.base }}/_list" hx-trigger="load" hx-swap="outerHTML">
+      <div class="card card-pad">
+        <h2 id="merch-list-title" class="font-display text-xl font-bold">{{ cfg.list_title }}</h2>
+        <p class="mt-1 text-sm text-royal-600">{{ cfg.loading }}</p>
+        <div class="mt-4">{{ skeleton_rows(3, "h-24") }}</div>
+      </div>
+    </div>
+  </section>
+</div>
+{% endblock %}

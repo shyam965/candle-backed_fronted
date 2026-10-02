@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% from "components/icons.html" import icon %}
+{% from "components/logo.html" import logo %}
+{% block title %}{% block admin_title %}Admin{% endblock %} — AK Royal Flames Admin{% endblock %}
+{% block body_class %}min-h-screen bg-cream-100{% endblock %}
+{% set admin_nav = [
+  ("/admin", "Dashboard", "dashboard"),
+  ("/admin/categories", "Categories", "folder"),
+  ("/admin/products", "Products", "package"),
+  ("/admin/orders", "Orders", "receipt"),
+  ("/admin/banner", "Banners", "image"),
+  ("/admin/promo-card", "Promotional Cards", "megaphone"),
+] %}
+{% block layout %}
+<div class="lg:flex">
+  <div class="sticky top-0 z-40 flex h-14 items-center justify-between bg-royal-950 px-4 text-white lg:hidden">
+    <span class="font-display text-base font-bold">AK Royal Flames <span class="text-flame-300">Admin</span></span>
+    <button type="button" class="icon-btn text-white hover:bg-royal-800" data-toggle="#admin-sidebar"
+            aria-controls="admin-sidebar" aria-expanded="false" aria-label="Toggle admin menu">{{ icon("menu") }}</button>
+  </div>
+  <div class="fixed inset-0 z-40 bg-royal-950/60 lg:hidden" data-close="#admin-sidebar" data-overlay-for="#admin-sidebar" hidden></div>
+
+  <aside id="admin-sidebar" class="fixed inset-y-0 left-0 z-50 w-72 -translate-x-full overflow-y-auto bg-royal-950 p-5 transition-transform duration-200 lg:sticky lg:top-0 lg:h-screen lg:w-64 lg:shrink-0 lg:translate-x-0"
+         data-toggle-class="-translate-x-full" aria-label="Admin navigation">
+    <div class="mb-8 flex items-center justify-between">
+      <a href="/admin" class="rounded-lg">{{ logo("light") }}</a>
+      <button type="button" class="icon-btn text-white hover:bg-royal-800 lg:hidden" data-close="#admin-sidebar" aria-label="Close menu">{{ icon("x") }}</button>
+    </div>
+    <nav class="flex flex-col gap-1">
+      {% for href, label, ic in admin_nav %}
+      <a href="{{ href }}" class="admin-link"{% if current_path == href %} aria-current="page"{% endif %}>{{ icon(ic, "h-5 w-5") }} {{ label }}</a>
+      {% endfor %}
+      <a href="/" class="admin-link mt-6 border-t border-royal-800 pt-5">{{ icon("store", "h-5 w-5") }} Back to Website</a>
+    </nav>
+    {% if current_user %}
+    <div class="mt-8 rounded-xl bg-royal-900 p-4 text-sm">
+      <p class="text-xs text-royal-300">Signed in as</p>
+      <p class="truncate font-semibold text-white">{{ current_user.name }}</p>
+      <form hx-post="/logout" hx-disabled-elt="find button" class="mt-3">
+        <button type="submit" class="btn btn-sm w-full border border-royal-700 text-royal-100 hover:bg-royal-800">
+          {{ icon("logout", "h-4 w-4") }}<span class="htmx-hide-on-request">Logout</span><span class="htmx-indicator">Logging out...</span>
+        </button>
+      </form>
+    </div>
+    {% endif %}
+  </aside>
+
+  <main id="main" class="min-w-0 flex-1 px-4 py-6 sm:px-6 lg:px-10 lg:py-10" tabindex="-1">
+    {% block content %}{% endblock %}
+  </main>
+</div>
+<dialog id="modal" class="m-auto w-[min(56rem,calc(100vw-2rem))] max-h-[calc(100vh-2rem)] overflow-hidden rounded-2xl bg-white p-0 shadow-[var(--shadow-lift)]"
+        aria-labelledby="modal-title"></dialog>
+{% endblock %}

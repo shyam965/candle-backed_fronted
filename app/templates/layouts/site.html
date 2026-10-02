@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block body_class %}flex min-h-screen flex-col{% endblock %}
+{% block layout %}
+  {% include "components/header.html" %}
+  <main id="main" class="flex-1" tabindex="-1">
+    {% block content %}{% endblock %}
+  </main>
+  {% include "components/footer.html" %}
+{% endblock %}

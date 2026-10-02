@@ -1,0 +1,62 @@
+{% extends "layouts/site.html" %}
+{% from "components/icons.html" import icon %}
+{% block title %}Contact Us — AK Royal Flames{% endblock %}
+{% block content %}
+<section class="bg-gradient-to-b from-cream-200 to-cream-100">
+  <div class="container-page py-14 text-center">
+    <p class="eyebrow">Contact</p>
+    <h1 class="mt-2 text-4xl font-bold sm:text-5xl">We'd love to hear from you</h1>
+    <p class="mx-auto mt-4 max-w-xl text-royal-600">Questions about a candle, a custom gift or your order? Reach out — we usually reply within a few hours.</p>
+  </div>
+</section>
+
+<section class="container-page -mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+  {% set tel = "tel:+" ~ settings.whatsapp_number %}
+  {% for ic, title, value, href in [
+    ("phone", "Call Us", settings.business_phone, tel),
+    ("mail", "Email Us", settings.business_email, "mailto:" ~ settings.business_email),
+    ("map-pin", "Visit Us", settings.business_address, None),
+    ("clock", "Working Hours", settings.business_hours, None),
+  ] %}
+  <div class="card card-pad flex items-start gap-4">
+    <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-flame-50 text-flame-700">{{ icon(ic) }}</span>
+    <div class="min-w-0">
+      <h2 class="font-sans text-sm font-semibold text-royal-900">{{ title }}</h2>
+      {% if href %}<a href="{{ href }}" class="mt-1 block break-words text-sm text-royal-700 hover:text-flame-700">{{ value }}</a>
+      {% else %}<p class="mt-1 text-sm text-royal-700">{{ value }}</p>{% endif %}
+    </div>
+  </div>
+  {% endfor %}
+</section>
+
+<section class="container-page grid gap-10 py-14 lg:grid-cols-5">
+  <div class="flex flex-col gap-6 lg:col-span-2">
+    <div class="overflow-hidden rounded-3xl shadow-[var(--shadow-soft)]">
+      <img src="{{ static_url('img/art-candles.svg') }}" alt="AK Royal Flames candles" class="aspect-[4/3] w-full object-cover">
+    </div>
+    <div class="card card-pad">
+      <h2 class="font-display text-xl font-bold">AK Royal Flames</h2>
+      <ul class="mt-4 flex flex-col gap-3 text-sm text-royal-700">
+        <li class="flex gap-3">{{ icon("phone", "h-4 w-4 mt-0.5 text-flame-700") }}<a href="{{ tel }}" class="hover:text-flame-700">{{ settings.business_phone }}</a></li>
+        <li class="flex gap-3">{{ icon("mail", "h-4 w-4 mt-0.5 text-flame-700") }}<a href="mailto:{{ settings.business_email }}" class="break-all hover:text-flame-700">{{ settings.business_email }}</a></li>
+        <li class="flex gap-3">{{ icon("map-pin", "h-4 w-4 mt-0.5 text-flame-700") }}<span>{{ settings.business_address }}</span></li>
+      </ul>
+      <div class="mt-5 flex gap-2">
+        <a href="{{ settings.instagram_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-sm">{{ icon("instagram", "h-4 w-4") }} Instagram</a>
+        <a href="{{ settings.facebook_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-sm">{{ icon("facebook", "h-4 w-4") }} Facebook</a>
+      </div>
+    </div>
+    {% if settings.map_embed_url %}
+    <div class="overflow-hidden rounded-3xl border border-cream-300">
+      <iframe src="{{ settings.map_embed_url }}" title="Map showing the AK Royal Flames location" class="h-64 w-full" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+    </div>
+    {% endif %}
+  </div>
+
+  <div class="card card-pad lg:col-span-3">
+    <h2 class="font-display text-2xl font-bold">Send us a message</h2>
+    <p class="mt-1 text-sm text-royal-600">Your message opens in WhatsApp so you can send it straight to us.</p>
+    <div class="mt-6">{% include "partials/contact_form.html" %}</div>
+  </div>
+</section>
+{% endblock %}

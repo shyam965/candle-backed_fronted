@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="AK Royal Flames">
+  <defs>
+    <linearGradient id="flame" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0" stop-color="#bf641c"/>
+      <stop offset="0.55" stop-color="#e39a44"/>
+      <stop offset="1" stop-color="#f4d5a8"/>
+    </linearGradient>
+    <linearGradient id="wax" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#6d4580"/>
+      <stop offset="1" stop-color="#3a2443"/>
+    </linearGradient>
+  </defs>
+  <circle cx="32" cy="32" r="31" fill="#fdf8f0" stroke="#ecb870" stroke-width="2"/>
+  <path d="M32 9c3 6 9 9.5 9 17a9 9 0 0 1-18 0c0-4 2-6.5 4-8.5.5 3 2 4.5 4 4.5-1.5-4-.5-8.5 1-13z" fill="url(#flame)"/>
+  <path d="M32 21c1.4 2.6 3.5 4 3.5 7a3.5 3.5 0 0 1-7 0c0-2 1.7-3.6 3.5-7z" fill="#fff7e6"/>
+  <rect x="31.2" y="33" width="1.6" height="5" rx=".8" fill="#3a2443"/>
+  <rect x="20" y="38" width="24" height="17" rx="4" fill="url(#wax)"/>
+  <path d="M20 42h24" stroke="#c2a8d2" stroke-width="1.2" opacity=".6"/>
+  <path d="M24 38v3.5a1.5 1.5 0 0 0 3 0V38" fill="#85599b"/>
+</svg>

@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en-IN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}AK Royal Flames — Handmade Candles{% endblock %}</title>
+  <meta name="description" content="{% block description %}Handmade scented candles by AK Royal Flames. Order easily over WhatsApp.{% endblock %}">
+  <meta name="csrf-token" content="{{ csrf_token }}">
+  <meta name="theme-color" content="#4b3057">
+  <meta name="htmx-config" content='{"includeIndicatorStyles":false,"allowScriptTags":false,"allowEval":false,"historyCacheSize":0,"responseHandling":[{"code":"204","swap":false},{"code":"[23]..","swap":true},{"code":"422","swap":true},{"code":"[45]..","swap":false,"error":true}]}'>
+  <link rel="icon" href="{{ static_url('img/favicon.svg') }}" type="image/svg+xml">
+  <link rel="preload" href="/static/fonts/inter-var.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="{{ static_url('css/app.css') }}">
+  <script src="{{ static_url('js/htmx.min.js') }}" defer></script>
+  <script src="{{ static_url('js/app.js') }}" defer></script>
+</head>
+<body class="{% block body_class %}min-h-screen{% endblock %}">
+  <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[130] focus:rounded-full focus:bg-white focus:px-4 focus:py-2 focus:shadow-lg">Skip to content</a>
+  <div id="progress-bar" class="progress-bar" aria-hidden="true"></div>
+  {% block layout %}{% endblock %}
+  <div id="toasts" class="pointer-events-none fixed inset-x-0 top-4 z-[110] flex flex-col items-center gap-2 px-4"
+       aria-live="polite" aria-atomic="false" data-duration="3000"></div>
+  <script type="application/json" id="flash-data">{{ (flash_messages or [])|tojson }}</script>
+</body>
+</html>

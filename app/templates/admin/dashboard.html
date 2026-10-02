@@ -1,0 +1,20 @@
+{% extends "layouts/admin.html" %}
+{% from "components/icons.html" import icon %}
+{% from "components/ui.html" import page_header, skeleton_rows %}
+{% block admin_title %}Dashboard{% endblock %}
+{% block content %}
+{% call page_header("Dashboard", "An overview of your catalogue and WhatsApp orders.") %}
+  <button type="button" class="btn btn-outline btn-sm" hx-get="/admin/_p/dashboard" hx-swap="none" hx-disabled-elt="this">
+    <span class="htmx-hide-on-request">{{ icon("refresh", "h-4 w-4") }} Refresh</span>
+    <span class="htmx-indicator">{{ icon("refresh", "h-4 w-4 animate-spin") }} Refreshing...</span>
+  </button>
+{% endcall %}
+<div id="dashboard-stats" hx-get="/admin/_p/stats" hx-trigger="load" hx-swap="outerHTML">
+  <p class="mb-3 text-sm text-royal-600">Loading dashboard...</p>
+  <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">{% for _ in range(4) %}<div class="skeleton h-28"></div>{% endfor %}</div>
+  <div class="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-6">{% for _ in range(6) %}<div class="skeleton h-20"></div>{% endfor %}</div>
+</div>
+<div id="dashboard-recent" class="mt-8" hx-get="/admin/_p/recent-orders" hx-trigger="load" hx-swap="outerHTML">
+  <div class="card card-pad">{{ skeleton_rows(5) }}</div>
+</div>
+{% endblock %}

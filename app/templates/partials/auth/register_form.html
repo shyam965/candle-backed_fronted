@@ -1,0 +1,18 @@
+{% from "components/ui.html" import input %}
+<form id="register-form" action="/register" method="post" class="grid gap-5 sm:grid-cols-2" novalidate data-live-register
+      hx-post="/register" hx-target="this" hx-swap="outerHTML" hx-disabled-elt="find button[type=submit]">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+  <input type="hidden" name="redirect" value="{{ redirect or '' }}">
+  <div class="sm:col-span-2">{{ input("name", "Full name", values.name, required=True, autocomplete="name", placeholder="Your full name", maxlength=120, errors=errors) }}</div>
+  {{ input("email", "Email address", values.email, type="email", required=True, autocomplete="email", placeholder="you@example.com", maxlength=254, errors=errors) }}
+  {{ input("phone", "Mobile number", values.phone, type="tel", autocomplete="tel-national", inputmode="numeric", placeholder="10 digit mobile number",
+           maxlength=10, hint="Optional — used to pre-fill your delivery details.", errors=errors, attrs='data-digits="10"') }}
+  {{ input("password", "Password", "", type="password", required=True, autocomplete="new-password", placeholder="At least 6 characters", maxlength=72, errors=errors) }}
+  {{ input("confirm_password", "Confirm password", "", type="password", required=True, autocomplete="new-password", placeholder="Re-enter password", maxlength=72, errors=errors) }}
+  <div class="sm:col-span-2">
+    <button type="submit" class="btn btn-primary btn-lg w-full">
+      <span class="htmx-hide-on-request">Create Account</span>
+      <span class="htmx-indicator">Creating account...</span>
+    </button>
+  </div>
+</form>

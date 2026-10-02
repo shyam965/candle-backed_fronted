@@ -1,0 +1,4 @@
+{# Cart badge: sum of quantities; hidden at 0; "99+" above 99 (FR-UI-005). #}
+<span id="cart-badge"{% if oob %} hx-swap-oob="true"{% endif %}
+      class="absolute -right-0.5 -top-0.5 min-w-[1.25rem] rounded-full bg-flame-700 px-1 text-center text-[0.65rem] font-bold leading-5 text-white ring-2 ring-white"
+      {% if not cart_count %}hidden{% endif %} data-count="{{ cart_count or 0 }}">{{ "99+" if (cart_count or 0) > 99 else (cart_count or 0) }}</span>

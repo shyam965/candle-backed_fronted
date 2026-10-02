@@ -1,0 +1,20 @@
+{% from "components/ui.html" import error_state, image_or_placeholder %}
+<div id="home-promo-cards">
+{% if load_error %}
+  {{ error_state(load_error, "/_p/home/promo-cards", "#home-promo-cards") }}
+{% elif cards %}
+  <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    {% for card in cards %}
+    <a href="{{ card.buttonLink|cta_href }}" class="group flex items-center gap-4 overflow-hidden rounded-3xl p-5 text-white shadow-[var(--shadow-soft)] transition hover:-translate-y-0.5 hover:shadow-[var(--shadow-lift)]"
+       style="background-color: {{ card.background|safe_color }}">
+      <div class="flex min-w-0 flex-1 flex-col gap-1.5">
+        <h3 class="font-display text-xl font-bold leading-snug text-white [text-shadow:0_1px_2px_rgb(0_0_0/0.35)]">{{ card.title }}</h3>
+        {% if card.subtitle %}<p class="text-sm text-white/90 [text-shadow:0_1px_2px_rgb(0_0_0/0.35)]">{{ card.subtitle }}</p>{% endif %}
+        <span class="mt-2 w-fit rounded-full bg-white px-4 py-1.5 text-xs font-bold text-royal-900 transition group-hover:bg-cream-100">{{ card.buttonText or "Shop Now" }}</span>
+      </div>
+      <div class="h-28 w-28 shrink-0 overflow-hidden rounded-2xl bg-white/20">{{ image_or_placeholder(card.image, card.title) }}</div>
+    </a>
+    {% endfor %}
+  </div>
+{% endif %}
+</div>

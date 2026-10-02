@@ -1,0 +1,15 @@
+{% extends "layouts/site.html" %}
+{% from "components/icons.html" import icon %}
+{% block title %}{{ title }} — AK Royal Flames{% endblock %}
+{% block content %}
+<section class="container-page flex flex-col items-center py-20 text-center sm:py-28">
+  <span class="flex h-16 w-16 items-center justify-center rounded-full bg-flame-50 text-flame-700">{% block error_icon %}{{ icon("alert", "h-8 w-8") }}{% endblock %}</span>
+  <p class="eyebrow mt-6">Error {{ status_code }}</p>
+  <h1 class="mt-2 text-3xl font-bold sm:text-4xl">{% block heading %}{{ title }}{% endblock %}</h1>
+  <p class="mt-3 max-w-md text-royal-600">{% block text %}{{ message or "Please try again." }}{% endblock %}</p>
+  <div class="mt-8 flex flex-wrap justify-center gap-3">
+    <a href="/" class="btn btn-primary">{{ icon("home", "h-4 w-4") }} Back to Home</a>
+    <a href="/shop" class="btn btn-outline">Browse Candles</a>
+  </div>
+</section>
+{% endblock %}

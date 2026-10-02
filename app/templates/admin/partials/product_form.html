@@ -1,0 +1,39 @@
+{% from "components/ui.html" import input, textarea, select, image_input, alert %}
+{% from "components/icons.html" import icon %}
+{% set editing = product is not none %}
+<div class="card mx-auto max-w-3xl">
+  <div class="flex items-start justify-between gap-4 border-b border-cream-300 p-5">
+    <div>
+      <h2 class="font-display text-xl font-bold">{{ "Edit Product" if editing else "Add Product" }}</h2>
+      <p class="text-sm text-royal-600">{{ "Update product details" if editing else "Create a new product" }}</p>
+    </div>
+    <button type="button" class="icon-btn" hx-get="/admin/products/_table" hx-target="#product-panel" data-form-close aria-label="Close form">{{ icon("x") }}</button>
+  </div>
+  <form class="grid gap-5 p-5 sm:grid-cols-2" novalidate hx-encoding="multipart/form-data"
+        {% if editing %}hx-put="/admin/products/{{ product._id }}"{% else %}hx-post="/admin/products"{% endif %}
+        hx-target="#product-panel" hx-disabled-elt="find button, #product-panel [data-form-close]">
+    {% if error %}<div class="sm:col-span-2">{{ alert(error, "error") }}</div>{% endif %}
+    <div class="sm:col-span-2">
+      {{ image_input("Product Image", current=product.image if editing else None, errors=errors, required=not editing,
+                     hint="Leave the image unchanged to keep the current image." if editing else None) }}
+    </div>
+    <div class="sm:col-span-2">{{ input("name", "Product Name", values.name, required=True, placeholder="Rose Scented Candle", maxlength=120, errors=errors) }}</div>
+    <div class="sm:col-span-2">
+      {{ select("category", "Category", category_options, value=values.category, required=True,
+                placeholder="Select Category", errors=errors) }}
+      {% if not category_options %}<p class="hint mt-1">Please create a category first.</p>{% endif %}
+    </div>
+    {{ input("price", "Selling Price (₹)", values.price, type="number", required=True, min=1, step="any", inputmode="decimal", errors=errors) }}
+    {{ input("oldPrice", "Old Price (₹)", values.oldPrice, type="number", min=1, step="any", inputmode="decimal",
+             hint="Optional — shown struck through to highlight a discount.", errors=errors) }}
+    {{ input("stock", "Stock", values.stock, type="number", required=True, min=0, step="1", inputmode="numeric", errors=errors) }}
+    <div class="sm:col-span-2">{{ textarea("description", "Description", values.description, rows=4, maxlength=2000, errors=errors) }}</div>
+    <div class="flex flex-col-reverse gap-2 sm:col-span-2 sm:flex-row sm:justify-end">
+      <button type="button" class="btn btn-outline" hx-get="/admin/products/_table" hx-target="#product-panel">Cancel</button>
+      <button type="submit" class="btn btn-primary">
+        <span class="htmx-hide-on-request">{{ "Update Product" if editing else "Upload Product" }}</span>
+        <span class="htmx-indicator">Saving...</span>
+      </button>
+    </div>
+  </form>
+</div>

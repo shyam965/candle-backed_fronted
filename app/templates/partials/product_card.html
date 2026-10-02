@@ -1,0 +1,57 @@
+{# Product card for Home (source=home) and Shop (source=shop): FR-UI-041–FR-UI-044, FR-UI-055/056. #}
+{% from "components/icons.html" import icon %}
+{% from "components/ui.html" import image_or_placeholder %}
+{% set p = product %}
+{% set stock = (p.stock|num or 0)|int %}
+{% set in_stock = stock > 0 %}
+{% set discount = p.price|discount(p.oldPrice) %}
+{% set card_id = "card-" ~ source ~ "-" ~ p._id %}
+<article id="{{ card_id }}" class="card group flex flex-col overflow-hidden transition hover:shadow-[var(--shadow-lift)]">
+  <div class="relative aspect-square overflow-hidden bg-cream-200">
+    {{ image_or_placeholder(p.image, p.name, "h-full w-full object-cover transition duration-500 group-hover:scale-105", "cart") }}
+    <div class="absolute left-3 top-3 flex flex-col gap-1.5">
+      {% if discount %}<span class="badge bg-flame-700 text-white shadow-sm">{{ ("Save " ~ discount ~ "%") if source == "home" else (discount ~ "% OFF") }}</span>{% endif %}
+      {% if not in_stock and source == "home" %}<span class="badge bg-royal-900 text-white">Sold Out</span>{% endif %}
+    </div>
+    {% if source == "shop" %}
+    <button type="button" class="absolute right-3 top-3 inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-royal-500 shadow-sm transition hover:scale-110"
+            data-wishlist="{{ p._id }}" aria-pressed="false" aria-label="Add to wishlist">{{ icon("heart", "h-4 w-4") }}</button>
+    {% if not in_stock %}
+    <div class="absolute inset-0 flex items-center justify-center bg-royal-950/45"><span class="rounded-full bg-white px-4 py-1.5 text-xs font-bold tracking-widest text-royal-900">SOLD OUT</span></div>
+    {% endif %}
+    {% endif %}
+  </div>
+  <div class="flex flex-1 flex-col gap-2 p-4">
+    {% if source == "shop" %}<p class="eyebrow text-[0.65rem]">{{ p.category_name }}</p>{% endif %}
+    <h3 class="font-sans text-base font-semibold leading-snug text-royal-900">{{ p.name }}</h3>
+    {% if p.description %}<p class="line-clamp-2 text-sm text-royal-600">{{ p.description }}</p>{% endif %}
+    <div class="mt-auto flex items-baseline gap-2 pt-1">
+      <span class="text-lg font-bold text-royal-900">{{ p.price|inr }}</span>
+      {% if discount %}<span class="text-sm text-royal-500 line-through">{{ p.oldPrice|inr }}</span>{% endif %}
+    </div>
+    <p class="text-xs font-semibold {{ 'text-emerald-700' if in_stock else 'text-red-700' }}">
+      {%- if source == "shop" %}● {% endif %}{{ (stock ~ " In Stock") if in_stock else "Out of Stock" -}}
+    </p>
+    {% if in_stock %}
+    <form class="mt-1 flex items-center gap-2" hx-post="/cart/add" hx-target="#{{ card_id }}" hx-swap="outerHTML" hx-disabled-elt="find button">
+      <input type="hidden" name="product_id" value="{{ p._id }}">
+      <input type="hidden" name="source" value="{{ source }}">
+      <div class="inline-flex items-center rounded-full border border-royal-200 bg-white" data-stepper>
+        <button type="button" class="icon-btn h-9 w-9" data-step="-1" aria-label="Decrease quantity">{{ icon("minus", "h-4 w-4") }}</button>
+        <label for="qty-{{ card_id }}" class="sr-only">Quantity of {{ p.name }}</label>
+        <input id="qty-{{ card_id }}" name="quantity" type="number" min="1" max="{{ stock }}" value="{{ quantity or 1 }}" inputmode="numeric"
+               class="w-10 appearance-none border-0 bg-transparent p-0 text-center text-sm font-semibold focus:outline-none focus:ring-0 [&::-webkit-inner-spin-button]:appearance-none">
+        <button type="button" class="icon-btn h-9 w-9" data-step="1" aria-label="Increase quantity">{{ icon("plus", "h-4 w-4") }}</button>
+      </div>
+      <button type="submit" class="btn btn-accent btn-sm flex-1 py-2.5">
+        <span class="htmx-hide-on-request">{{ "Add More" if added else "Add to Cart" }}</span><span class="htmx-indicator">Adding...</span>
+      </button>
+    </form>
+    {% else %}
+    <button type="button" class="btn btn-sm mt-1 w-full bg-cream-200 py-2.5 text-royal-500" disabled>Out of Stock</button>
+    {% endif %}
+    {% if card_message %}
+    <p class="text-xs font-medium {{ 'text-emerald-700' if card_kind == 'success' else 'text-red-700' }}" role="status">{{ card_message }}</p>
+    {% endif %}
+  </div>
+</article>

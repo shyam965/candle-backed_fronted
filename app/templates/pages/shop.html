@@ -1,0 +1,60 @@
+{% extends "layouts/site.html" %}
+{% from "components/icons.html" import icon %}
+{% block title %}Shop Candles — AK Royal Flames{% endblock %}
+{% block content %}
+<section class="bg-gradient-to-br from-royal-900 via-royal-800 to-royal-950 text-white">
+  <div class="container-page py-10 sm:py-14">
+    <nav aria-label="Breadcrumb" class="text-sm text-royal-200">
+      <ol class="flex items-center gap-1.5"><li><a href="/" class="hover:text-white">Home</a></li><li aria-hidden="true">›</li><li aria-current="page" class="text-white">Shop</li></ol>
+    </nav>
+    <h1 class="mt-3 text-4xl font-bold text-white sm:text-5xl">Find Your Perfect Glow</h1>
+    <p class="mt-2 max-w-xl text-royal-100">Hand-poured candles for every mood, space and celebration.</p>
+  </div>
+</section>
+
+<div class="container-page grid gap-8 py-8 lg:grid-cols-[16rem_1fr]">
+  <div class="fixed inset-0 z-40 bg-royal-950/50 lg:hidden" data-close="#shop-drawer" data-overlay-for="#shop-drawer" hidden></div>
+  <aside id="shop-drawer" class="fixed inset-y-0 left-0 z-50 w-80 max-w-[85vw] -translate-x-full overflow-y-auto bg-cream-50 p-5 shadow-xl transition-transform duration-200 lg:static lg:z-auto lg:w-auto lg:max-w-none lg:translate-x-0 lg:bg-transparent lg:p-0 lg:shadow-none"
+         data-toggle-class="-translate-x-full" aria-label="Categories">
+    <div class="lg:sticky lg:top-28">
+      <div class="mb-3 flex items-center justify-between">
+        <h2 class="font-display text-lg font-bold">Categories</h2>
+        <button type="button" class="icon-btn lg:hidden" data-close="#shop-drawer" aria-label="Close categories">{{ icon("x") }}</button>
+      </div>
+      {% include "partials/shop/categories.html" %}
+    </div>
+  </aside>
+
+  <div class="min-w-0">
+    <form id="shop-filters" action="/shop" method="get" class="flex flex-col gap-3 sm:flex-row sm:items-center"
+          hx-get="/shop" hx-target="#shop-results" hx-swap="outerHTML" hx-push-url="true"
+          hx-trigger="input changed delay:350ms from:#shop-search, change from:#shop-sort, submit">
+      <input type="hidden" id="shop-category-input" name="category" value="{{ params.category }}">
+      <button type="button" class="btn btn-outline lg:hidden" data-toggle="#shop-drawer"
+              aria-controls="shop-drawer" aria-expanded="false">{{ icon("filter", "h-4 w-4") }} Categories</button>
+      <div class="relative flex-1">
+        <label for="shop-search" class="sr-only">Search candles</label>
+        <span class="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-royal-400">{{ icon("search", "h-4 w-4") }}</span>
+        <input id="shop-search" name="search" type="search" value="{{ params.search }}" placeholder="Search candles..." maxlength="100"
+               class="input pl-10" autocomplete="off">
+      </div>
+      <label for="shop-sort" class="sr-only">Sort products</label>
+      <select id="shop-sort" name="sort" class="input sm:w-56">
+        {% for key, label in sorts.items() %}<option value="{{ key }}"{% if params.sort == key %} selected{% endif %}>{{ label }}</option>{% endfor %}
+      </select>
+    </form>
+    <div id="shop-status-region" class="mt-4">{% include "partials/shop/status.html" %}</div>
+    <div class="mt-4">{% include "partials/shop/results.html" %}</div>
+  </div>
+</div>
+
+<section class="container-page pb-6">
+  <div class="flex flex-col items-center gap-4 rounded-3xl bg-white px-6 py-10 text-center shadow-[var(--shadow-soft)] sm:flex-row sm:justify-between sm:text-left">
+    <div>
+      <h2 class="font-display text-2xl font-bold">Find Your Perfect Candle</h2>
+      <p class="mt-1 text-royal-600">Not sure what to pick? Tell us the occasion and we'll help you choose.</p>
+    </div>
+    <a href="/contact" class="btn btn-primary">Contact Us</a>
+  </div>
+</section>
+{% endblock %}

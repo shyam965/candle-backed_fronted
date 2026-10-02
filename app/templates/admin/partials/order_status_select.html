@@ -1,0 +1,13 @@
+{# Status <select>: only the current status and allowed next statuses (D-30). Terminal orders are read-only. #}
+{% macro status_select(order, source="row") -%}
+{% set current = order_status(order) %}
+{% set options = [current] + allowed_statuses(current) %}
+{% set style = status_style(current) %}
+<select name="status" class="input w-36 py-1.5 text-xs font-semibold [&.htmx-request]:pointer-events-none [&.htmx-request]:opacity-60 {{ style[0] }}" aria-label="Order status for {{ order.orderId }}"
+        data-status-select data-current="{{ current }}"
+        {% if not allowed_statuses(current) %}disabled title="This order is {{ current|lower }} and can no longer change"{% endif %}
+        hx-put="/admin/orders/{{ order._id }}/status" hx-trigger="change" hx-vals='{"source": "{{ source }}"}'
+        hx-target="{{ '#modal-body' if source == 'modal' else '#order-row-' ~ order._id }}" hx-swap="outerHTML" hx-sync="this:drop">
+  {% for s in options %}<option value="{{ s }}"{% if s == current %} selected{% endif %}>{{ s }}</option>{% endfor %}
+</select>
+{%- endmacro %}

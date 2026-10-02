@@ -1,0 +1,3 @@
+{% include "partials/product_card.html" %}
+{% if cart_count is defined %}{% include "partials/header_cart_badge.html" %}{% endif %}
+{% if source == "shop" %}{% include "partials/shop/status.html" %}{% endif %}

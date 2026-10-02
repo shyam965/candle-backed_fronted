@@ -1,0 +1,15 @@
+{% from "components/icons.html" import icon %}
+<div id="pending-banner" class="alert alert-info items-center justify-between" role="status">
+  <div class="flex items-start gap-3">
+    {{ icon("whatsapp", "h-5 w-5 shrink-0 mt-0.5") }}
+    <div>
+      <p class="font-semibold">You have a pending WhatsApp order</p>
+      <p>Order ID {{ pending_order.orderId }} · {{ pending_order.grandTotal|inr }}. Confirm it once you've sent the WhatsApp message.</p>
+    </div>
+  </div>
+  <div class="flex shrink-0 gap-2">
+    <a href="/whatsapp-confirm" class="btn btn-primary btn-sm">Continue</a>
+    <button type="button" class="btn btn-outline btn-sm" hx-delete="/cart/pending-order" hx-target="#pending-banner" hx-swap="outerHTML"
+            hx-confirm="Discard this pending WhatsApp order?">Discard</button>
+  </div>
+</div>

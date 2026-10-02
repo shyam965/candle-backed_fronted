@@ -1,0 +1,20 @@
+{% extends "layouts/site.html" %}
+{% from "components/icons.html" import icon %}
+{% block title %}My Cart — AK Royal Flames{% endblock %}
+{% block content %}
+{% if guest %}
+<section class="container-page py-16 sm:py-24">
+  <div class="mx-auto flex max-w-md flex-col items-center rounded-3xl border border-cream-300 bg-white px-6 py-12 text-center shadow-[var(--shadow-soft)]">
+    <span class="flex h-16 w-16 items-center justify-center rounded-full bg-flame-50 text-flame-700">{{ icon("cart", "h-8 w-8") }}</span>
+    <h1 class="mt-5 text-3xl font-bold">Please Login</h1>
+    <p class="mt-2 text-royal-600">Please login to view your personal cart and place an order.</p>
+    <div class="mt-8 flex w-full flex-col gap-3 sm:flex-row">
+      <a href="/login?redirect=%2Fcart" class="btn btn-primary flex-1">Login</a>
+      <a href="/register" class="btn btn-outline flex-1">Create Account</a>
+    </div>
+  </div>
+</section>
+{% else %}
+{% include "partials/cart/root.html" %}
+{% endif %}
+{% endblock %}

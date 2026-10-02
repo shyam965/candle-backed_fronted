@@ -1,0 +1,3 @@
+{% extends "errors/error.html" %}
+{% block heading %}Access denied{% endblock %}
+{% block text %}{{ message or "You don't have permission to view this page." }}{% endblock %}

@@ -1,0 +1,37 @@
+{% from "components/icons.html" import icon %}
+{% from "components/ui.html" import image_or_placeholder %}
+{% macro cat_link(href, label, count, active, image=None, show_icon=True) -%}
+<a href="{{ href }}" hx-get="{{ href }}" hx-target="#shop-results" hx-swap="outerHTML" hx-push-url="true" data-close="#shop-drawer"
+   class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition {{ 'bg-royal-800 text-white' if active else 'text-royal-900 hover:bg-white' }}"
+   {% if active %}aria-current="page"{% endif %}>
+  <span class="h-9 w-9 shrink-0 overflow-hidden rounded-lg {{ 'bg-royal-700' if active else 'bg-cream-200' }}">
+    {% if image is not none %}{{ image_or_placeholder(image, "", "h-full w-full object-cover", "sparkles") }}
+    {% else %}<span class="flex h-full w-full items-center justify-center">{{ icon("sparkles", "h-4 w-4") }}</span>{% endif %}
+  </span>
+  <span class="flex min-w-0 flex-1 flex-col">
+    <span class="truncate font-semibold">{{ label }}</span>
+    <span class="text-xs {{ 'text-royal-200' if active else 'text-royal-600' }}">{{ count }} products</span>
+  </span>
+</a>
+{%- endmacro %}
+<div id="shop-categories"{% if oob %} hx-swap-oob="true"{% endif %}>
+  {% if categories_error %}
+    <div class="alert alert-error flex-col">
+      <p>{{ categories_error }}</p>
+      <a href="{{ shop_url(category=params.category, search=params.search, sort=params.sort) }}" class="btn btn-sm btn-danger-outline w-fit">Retry</a>
+    </div>
+  {% elif categories is not defined %}
+    <div class="flex flex-col gap-2" aria-busy="true">{% for _ in range(5) %}<div class="skeleton h-12"></div>{% endfor %}</div>
+  {% else %}
+  <nav class="flex flex-col gap-1" aria-label="Product categories">
+    {{ cat_link(shop_url(search=params.search, sort=params.sort), "All Products", all_count or 0, not params.category) }}
+    {% if not categories %}
+      <p class="px-3 py-4 text-sm text-royal-600">No categories available.</p>
+    {% endif %}
+    {% for category in categories %}
+      {{ cat_link(shop_url(category=category._id|string, search=params.search, sort=params.sort), category.name,
+                  (counts or {}).get(category._id|string, 0), params.category == category._id|string, category.image or "") }}
+    {% endfor %}
+  </nav>
+  {% endif %}
+</div>

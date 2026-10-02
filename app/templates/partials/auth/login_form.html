@@ -1,0 +1,18 @@
+{% from "components/ui.html" import input, alert %}
+<form id="login-form" action="/login" method="post" class="flex flex-col gap-5" novalidate
+      hx-post="/login" hx-target="this" hx-swap="outerHTML" hx-disabled-elt="find button[type=submit]"
+      data-clear-on-input="#login-error">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+  <input type="hidden" name="redirect" value="{{ redirect or '' }}">
+  {% if error %}
+  <div id="login-error">{{ alert(error, "error", "Login Failed") }}</div>
+  {% endif %}
+  {{ input("email", "Email address", values.email, type="email", required=True, autocomplete="email",
+           placeholder="you@example.com", maxlength=254) }}
+  {{ input("password", "Password", "", type="password", required=True, autocomplete="current-password",
+           placeholder="Your password", maxlength=72) }}
+  <button type="submit" class="btn btn-primary btn-lg w-full">
+    <span class="htmx-hide-on-request">Login</span>
+    <span class="htmx-indicator">Logging in...</span>
+  </button>
+</form>

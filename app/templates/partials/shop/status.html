@@ -1,0 +1,9 @@
+{% from "components/icons.html" import icon %}
+<div id="shop-status"{% if oob %} hx-swap-oob="true"{% endif %}>
+  {% if status_message %}
+  <div class="alert {{ 'alert-success' if status_kind == 'success' else 'alert-error' }} items-center justify-between" role="status">
+    <span>{{ status_message }}</span>
+    <button type="button" class="icon-btn h-8 w-8" data-dismiss="#shop-status" aria-label="Dismiss message">{{ icon("x", "h-4 w-4") }}</button>
+  </div>
+  {% endif %}
+</div>

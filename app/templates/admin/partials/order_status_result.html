@@ -1,0 +1,8 @@
+{# Status change response: the changed row (or the modal body) plus out-of-band updates (FR-UI-123, FR-UI-124). #}
+{% if from_modal %}
+  {% include "admin/partials/order_modal.html" %}
+  {% with oob=True %}{% include "admin/partials/order_row.html" %}{% endwith %}
+{% else %}
+  {% include "admin/partials/order_row.html" %}
+{% endif %}
+{% with oob=True %}{% include "admin/partials/orders_stats.html" %}{% endwith %}

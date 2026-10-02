@@ -1,0 +1,55 @@
+{% from "components/ui.html" import alert, error_state, spinner, image_or_placeholder %}
+{% from "components/icons.html" import icon %}
+<div class="card overflow-hidden">
+  <div class="flex flex-col gap-4 border-b border-cream-300 p-5 sm:flex-row sm:items-center sm:justify-between">
+    <div>
+      <h2 class="font-display text-xl font-bold">Categories ({{ categories|length if categories is defined else 0 }})</h2>
+      <p class="text-sm text-royal-600">Manage your categories</p>
+    </div>
+    <div class="flex flex-wrap items-center gap-2">
+      <label for="category-search" class="sr-only">Search categories</label>
+      <input id="category-search" type="search" name="q" value="{{ q }}" placeholder="Search categories..." class="input w-full sm:w-64"
+             hx-get="/admin/categories/_table" hx-trigger="input changed delay:300ms, search" hx-target="#category-panel" maxlength="100">
+      <button type="button" class="btn btn-outline btn-sm" hx-get="/admin/categories/_table" hx-include="#category-search"
+              hx-target="#category-panel" hx-disabled-elt="this">
+        <span class="htmx-hide-on-request">{{ icon("refresh", "h-4 w-4") }}</span><span class="htmx-indicator">{{ spinner() }}</span> Refresh
+      </button>
+      <button type="button" class="btn btn-primary btn-sm" hx-get="/admin/categories/new" hx-target="#category-panel">{{ icon("plus", "h-4 w-4") }} Add New</button>
+    </div>
+  </div>
+  {% if message %}<div class="px-5 pt-4">{{ alert(message, "success") }}</div>{% endif %}
+  {% if load_error %}
+  <div class="p-5">{{ error_state(load_error, "/admin/categories/_table", "#category-panel", "innerHTML") }}</div>
+  {% elif not categories %}
+  <div class="flex flex-col items-center gap-2 px-5 py-14 text-center">
+    <span class="flex h-12 w-12 items-center justify-center rounded-full bg-flame-50 text-flame-700">{{ icon("folder", "h-6 w-6") }}</span>
+    <p class="font-semibold text-royal-900">No categories found</p>
+    {% if q %}<p class="text-sm text-royal-600">Try a different search.</p>{% endif %}
+  </div>
+  {% else %}
+  <div class="overflow-x-auto">
+    <table class="table">
+      <thead><tr><th scope="col">Image</th><th scope="col">Category Name</th><th scope="col">Description</th><th scope="col" class="text-right">Actions</th></tr></thead>
+      <tbody class="divide-y divide-cream-200">
+        {% for category in categories %}
+        <tr>
+          <td><div class="h-12 w-12 overflow-hidden rounded-xl bg-cream-200">{{ image_or_placeholder(category.image, category.name) }}</div></td>
+          <td class="font-semibold">{{ category.name }}</td>
+          <td class="max-w-md text-royal-600"><p class="line-clamp-2">{{ category.description or "—" }}</p></td>
+          <td>
+            <div class="flex justify-end gap-1">
+              <button type="button" class="icon-btn" hx-get="/admin/categories/{{ category._id }}/edit" hx-target="#category-panel"
+                      aria-label="Edit {{ category.name }}" title="Edit">{{ icon("pencil", "h-4 w-4") }}</button>
+              <button type="button" class="icon-btn text-red-700 hover:bg-red-50" data-delete
+                      hx-delete="/admin/categories/{{ category._id }}" hx-target="#category-panel"
+                      hx-confirm='Are you sure you want to delete "{{ category.name }}"?' hx-disabled-elt="#category-panel [data-delete]"
+                      aria-label="Delete {{ category.name }}" title="Delete">{{ icon("trash", "h-4 w-4") }}</button>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+</div>

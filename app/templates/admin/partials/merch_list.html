@@ -1,0 +1,39 @@
+{% from "components/ui.html" import error_state, image_or_placeholder %}
+{% from "components/icons.html" import icon %}
+<div id="merch-list" class="card"{% if oob %} hx-swap-oob="true"{% endif %}>
+  <div class="flex items-center justify-between border-b border-cream-300 p-5">
+    <div>
+      <h2 id="merch-list-title" class="font-display text-xl font-bold">{{ cfg.list_title }}</h2>
+      <p class="text-sm text-royal-600">{{ items|length if items is defined else 0 }} total · sorted by display order</p>
+    </div>
+    <button type="button" class="btn btn-outline btn-sm" hx-get="{{ cfg.base }}/_list" hx-target="#merch-list" hx-swap="outerHTML">{{ icon("refresh", "h-4 w-4") }} Refresh</button>
+  </div>
+  <div class="p-5">
+    {% if load_error %}
+      {{ error_state(load_error, cfg.base ~ "/_list", "#merch-list") }}
+    {% elif not items %}
+      <p class="py-10 text-center text-sm text-royal-600">{{ cfg.empty }}</p>
+    {% else %}
+    <ul class="grid gap-4 sm:grid-cols-2">
+      {% for item in items %}
+      <li class="overflow-hidden rounded-2xl border border-cream-300"
+          {% if cfg.kind.has_background %}style="background-color: {{ item.background|safe_color }}"{% endif %}>
+        <div class="aspect-[16/9] bg-cream-200">{{ image_or_placeholder(item.image, item.title) }}</div>
+        <div class="flex flex-col gap-2 p-4 {{ 'bg-white/90' if cfg.kind.has_background else 'bg-white' }}">
+          <div class="flex items-start justify-between gap-2">
+            <h3 class="font-display text-base font-bold leading-snug">{{ item.title }}</h3>
+            {% if item.status %}<span class="badge badge-success">Active</span>{% else %}<span class="badge badge-neutral">Inactive</span>{% endif %}
+          </div>
+          {% if item.subtitle %}<p class="text-sm text-royal-600">{{ item.subtitle }}</p>{% endif %}
+          <p class="text-xs text-royal-600">Button: <span class="font-medium text-royal-900">{{ item.buttonText }}</span>
+            {% if not cfg.kind.has_background %} · Order: <span class="font-medium text-royal-900">{{ item.order }}</span>{% endif %}</p>
+          <button type="button" class="btn btn-danger-outline btn-sm mt-1 self-start" hx-delete="{{ cfg.base }}/{{ item._id }}"
+                  hx-target="#merch-list" hx-swap="outerHTML" hx-confirm="{{ cfg.confirm }}" hx-disabled-elt="this"
+                  aria-label="Delete {{ cfg.item_label }} {{ item.title }}">{{ icon("trash", "h-4 w-4") }} Delete</button>
+        </div>
+      </li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+  </div>
+</div>

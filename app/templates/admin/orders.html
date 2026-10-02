@@ -1,0 +1,31 @@
+{% extends "layouts/admin.html" %}
+{% from "components/icons.html" import icon %}
+{% from "components/ui.html" import page_header, skeleton_rows, spinner %}
+{% block admin_title %}Orders{% endblock %}
+{% block content %}
+{% call page_header("Orders", "Manage customer WhatsApp orders") %}
+  <button type="button" class="btn btn-outline btn-sm" hx-get="/admin/orders/_table" hx-include="#order-filters" hx-target="#orders-panel"
+          hx-swap="innerHTML" hx-disabled-elt="this">
+    <span class="htmx-hide-on-request">{{ icon("refresh", "h-4 w-4") }}</span><span class="htmx-indicator">{{ spinner() }}</span> Refresh
+  </button>
+{% endcall %}
+<div id="orders-stats" class="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+  {% for _ in range(5) %}<div class="skeleton h-20"></div>{% endfor %}
+</div>
+<form id="order-filters" class="mb-4 flex flex-col gap-3 sm:flex-row" hx-get="/admin/orders/_table" hx-target="#orders-panel" hx-swap="innerHTML"
+      hx-trigger="input changed delay:300ms from:#order-search, change from:#order-status-filter, submit">
+  <div class="relative flex-1">
+    <label for="order-search" class="sr-only">Search orders</label>
+    <span class="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-royal-400">{{ icon("search", "h-4 w-4") }}</span>
+    <input id="order-search" type="search" name="q" value="{{ filters.q }}" placeholder="Search by order ID, name or mobile..." class="input pl-10" maxlength="100">
+  </div>
+  <label for="order-status-filter" class="sr-only">Filter by status</label>
+  <select id="order-status-filter" name="status" class="input sm:w-52">
+    <option value="">All Status</option>
+    {% for s in statuses %}<option value="{{ s }}"{% if filters.status == s %} selected{% endif %}>{{ s }}</option>{% endfor %}
+  </select>
+</form>
+<div id="orders-panel" hx-get="/admin/orders/_table" hx-include="#order-filters" hx-trigger="load" hx-swap="innerHTML" hx-disinherit="hx-include">
+  <div class="card card-pad"><p class="mb-4 text-sm text-royal-600">Loading orders...</p>{{ skeleton_rows(6) }}</div>
+</div>
+{% endblock %}

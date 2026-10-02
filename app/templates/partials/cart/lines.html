@@ -1,0 +1,50 @@
+{% from "components/icons.html" import icon %}
+{% from "components/ui.html" import image_or_placeholder %}
+{% set all_selected = lines|selectattr("selected", "ne", false)|list|length == lines|length %}
+<div id="cart-lines" class="card overflow-hidden [&:has(.htmx-request)]:opacity-80" hx-sync="this:queue last">
+  <div class="flex items-center justify-between gap-3 border-b border-cream-300 px-5 py-3">
+    <label class="flex items-center gap-3 text-sm font-medium text-royal-900">
+      <input type="checkbox" name="selected" value="true" class="h-5 w-5 rounded accent-flame-700"{% if all_selected %} checked{% endif %}
+             hx-put="/cart/selection" hx-trigger="change" hx-target="#cart-lines" hx-swap="outerHTML" hx-disabled-elt="#cart-lines button">
+      Select all
+    </label>
+    <span class="text-xs text-royal-600">Only selected items are ordered</span>
+  </div>
+  <ul class="divide-y divide-cream-200">
+    {% for line in lines %}
+    {% set p = line.product %}
+    {% set qty = line.quantity or 1 %}
+    {% set stock = (p.stock|num or 0)|int %}
+    <li class="flex gap-4 p-4 sm:p-5">
+      <input type="checkbox" name="selected" value="true" class="mt-8 h-5 w-5 shrink-0 rounded accent-flame-700"
+             {% if line.selected is not sameas false %}checked{% endif %} aria-label="Select {{ p.name }} for this order"
+             hx-put="/cart/items/{{ p._id }}/selected" hx-trigger="change" hx-target="#cart-lines" hx-swap="outerHTML"
+             hx-disabled-elt="#cart-lines button">
+      <div class="h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-cream-200 sm:h-24 sm:w-24">{{ image_or_placeholder(p.image, p.name) }}</div>
+      <div class="flex min-w-0 flex-1 flex-col gap-2">
+        <div class="flex items-start justify-between gap-3">
+          <h2 class="font-sans text-base font-semibold text-royal-900">{{ p.name }}</h2>
+          <button type="button" class="btn btn-ghost btn-sm -mr-2 text-red-700 hover:bg-red-50" hx-delete="/cart/items/{{ p._id }}"
+                  hx-target="#cart-lines" hx-swap="outerHTML" hx-disabled-elt="#cart-lines button"
+                  aria-label="Remove {{ p.name }}">{{ icon("trash", "h-4 w-4") }}<span class="hidden sm:inline">Remove</span></button>
+        </div>
+        <p class="text-sm text-royal-600">Unit Price: <span class="font-medium text-royal-900">{{ p.price|inr }}</span></p>
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div class="inline-flex items-center rounded-full border border-royal-200 bg-white" role="group" aria-label="Quantity for {{ p.name }}">
+            <button type="button" class="icon-btn h-9 w-9" {% if qty <= 1 %}disabled{% endif %} aria-label="Decrease quantity"
+                    hx-put="/cart/items/{{ p._id }}" hx-vals='{"quantity": {{ qty - 1 }}}' hx-target="#cart-lines" hx-swap="outerHTML"
+                    hx-disabled-elt="#cart-lines button">{{ icon("minus", "h-4 w-4") }}</button>
+            <span class="min-w-[2.5rem] text-center text-sm font-semibold" aria-live="polite">{{ qty }}</span>
+            <button type="button" class="icon-btn h-9 w-9" {% if stock > 0 and qty >= stock %}disabled{% endif %} aria-label="Increase quantity"
+                    hx-put="/cart/items/{{ p._id }}" hx-vals='{"quantity": {{ qty + 1 }}}' hx-target="#cart-lines" hx-swap="outerHTML"
+                    hx-disabled-elt="#cart-lines button">{{ icon("plus", "h-4 w-4") }}</button>
+          </div>
+          <p class="text-sm">Item Total: <span class="font-semibold text-royal-900">{{ ((p.price|num or 0) * qty)|inr }}</span></p>
+        </div>
+        {% if stock <= 0 %}<p class="text-xs font-medium text-red-700">This candle is currently out of stock.</p>
+        {% elif qty > stock %}<p class="text-xs font-medium text-amber-800">Only {{ stock }} left — please reduce the quantity.</p>{% endif %}
+      </div>
+    </li>
+    {% endfor %}
+  </ul>
+</div>

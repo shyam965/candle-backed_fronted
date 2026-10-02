@@ -1,0 +1,14 @@
+.env
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+uploads/
+bin/
+*.log
+.coverage
+htmlcov/
+*.egg-info/
+build/
+ui-review/
+uploads-demo/

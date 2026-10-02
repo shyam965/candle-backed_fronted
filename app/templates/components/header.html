@@ -1,0 +1,87 @@
+{% from "components/icons.html" import icon %}
+{% from "components/logo.html" import logo %}
+{% set nav = [("/", "HOME"), ("/shop", "SHOP"), ("/about", "ABOUT"), ("/contact", "CONTACT")] %}
+{% macro nav_current(href) -%}
+{%- if (href == "/" and current_path == "/") or (href != "/" and (current_path == href or current_path.startswith(href ~ "/"))) %} aria-current="page"{% endif -%}
+{%- endmacro %}
+<header class="sticky top-0 z-50 border-b border-cream-300 bg-cream-50/95 backdrop-blur supports-[backdrop-filter]:bg-cream-50/80">
+  <div class="container-page flex h-16 items-center justify-between gap-3 md:h-20">
+    <a href="/" class="shrink-0 rounded-lg" aria-label="AK Royal Flames home">{{ logo(compact_tablet=current_user is not none) }}</a>
+
+    <nav class="hidden items-center gap-5 md:flex lg:gap-7" aria-label="Main">
+      {% for href, label in nav %}
+      <a href="{{ href }}" class="nav-link"{{ nav_current(href) }}>{{ label }}</a>
+      {% endfor %}
+    </nav>
+
+    <div class="flex items-center gap-1 sm:gap-2">
+      <button type="button" class="icon-btn" data-toggle="#site-search" aria-controls="site-search" aria-expanded="false" aria-label="Search candles">
+        {{ icon("search") }}
+      </button>
+      <a href="/cart" class="icon-btn relative" aria-label="Cart">
+        {{ icon("cart") }}
+        {% with oob=False %}{% include "partials/header_cart_badge.html" %}{% endwith %}
+      </a>
+
+      {% if current_user %}
+      <a href="/my-orders" class="btn btn-ghost btn-sm hidden lg:inline-flex"{{ nav_current("/my-orders") }}>{{ icon("bag", "h-4 w-4") }} My Orders</a>
+      <a href="{{ '/admin' if is_admin(current_user) else '/' }}" class="hidden max-w-[10rem] items-center gap-2 rounded-full bg-royal-50 px-3 py-1.5 text-sm font-semibold text-royal-800 hover:bg-royal-100 md:inline-flex"
+         title="{{ current_user.name }}">
+        {{ icon("user", "h-4 w-4 shrink-0") }}<span class="truncate">{{ current_user.name }}</span>
+      </a>
+      {% if is_admin(current_user) %}
+      <a href="/admin" class="icon-btn hidden md:inline-flex" aria-label="Admin dashboard" title="Admin dashboard">{{ icon("dashboard") }}</a>
+      {% endif %}
+      <form hx-post="/logout" hx-disabled-elt="find button" class="hidden md:block">
+        <button type="submit" class="icon-btn" aria-label="Logout" title="Logout">
+          <span class="htmx-hide-on-request">{{ icon("logout") }}</span>
+          <span class="htmx-indicator">{{ icon("loader", "h-5 w-5 animate-spin") }}</span>
+        </button>
+      </form>
+      {% else %}
+      <a href="/login" class="btn btn-primary btn-sm hidden sm:inline-flex">Login</a>
+      {% endif %}
+
+      <button type="button" class="icon-btn md:hidden" data-toggle="#mobile-menu" aria-controls="mobile-menu" aria-expanded="false" aria-label="Open menu">
+        {{ icon("menu") }}
+      </button>
+    </div>
+  </div>
+
+  <div id="site-search" class="border-t border-cream-300 bg-white" hidden>
+    <form action="/shop" method="get" role="search" class="container-page flex gap-2 py-3">
+      <label for="header-search" class="sr-only">Search candles</label>
+      <input id="header-search" name="search" type="search" placeholder="Search candles..." class="input" maxlength="100" autocomplete="off">
+      <button type="submit" class="btn btn-primary">Search</button>
+    </form>
+  </div>
+
+  <div id="mobile-menu" class="border-t border-cream-300 bg-white md:hidden" hidden>
+    <nav class="container-page flex flex-col gap-1 py-3" aria-label="Mobile">
+      {% if current_user %}
+      <div class="mb-2 rounded-xl bg-royal-50 px-4 py-3">
+        <p class="text-xs text-royal-600">Welcome</p>
+        <p class="truncate font-semibold text-royal-900">{{ current_user.name }}</p>
+      </div>
+      {% endif %}
+      {% for href, label in nav %}
+      <a href="{{ href }}" class="rounded-lg px-3 py-2.5 text-sm font-semibold text-royal-800 hover:bg-cream-100 aria-[current=page]:bg-flame-50 aria-[current=page]:text-flame-700"{{ nav_current(href) }}>{{ label }}</a>
+      {% endfor %}
+      <div class="mt-2 flex flex-col gap-2 border-t border-cream-300 pt-3">
+        {% if current_user %}
+        <a href="/my-orders" class="btn btn-outline">{{ icon("bag", "h-4 w-4") }} My Orders</a>
+        {% if is_admin(current_user) %}
+        <a href="/admin" class="btn btn-outline">{{ icon("dashboard", "h-4 w-4") }} Admin Dashboard</a>
+        {% endif %}
+        <form hx-post="/logout" hx-disabled-elt="find button">
+          <button type="submit" class="btn btn-danger-outline w-full">
+            <span class="htmx-hide-on-request">Logout</span><span class="htmx-indicator">Logging out...</span>
+          </button>
+        </form>
+        {% else %}
+        <a href="/login" class="btn btn-primary">Login</a>
+        {% endif %}
+      </div>
+    </nav>
+  </div>
+</header>

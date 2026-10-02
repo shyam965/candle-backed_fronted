@@ -1,0 +1,10 @@
+{% macro logo(variant="dark", size="md", compact_tablet=False) -%}
+{% set img_size = "h-9 w-9" if size == "md" else "h-11 w-11" %}
+<span class="inline-flex items-center gap-2.5">
+  <img src="{{ static_url('img/logo.svg') }}" alt="" class="{{ img_size }} shrink-0" width="40" height="40">
+  <span class="flex flex-col leading-none{{ ' md:hidden lg:flex' if compact_tablet else '' }}">
+    <span class="font-display text-lg font-bold tracking-wide {{ 'text-white' if variant == 'light' else 'text-royal-900' }}">AK Royal Flames</span>
+    <span class="mt-1 text-[0.65rem] font-semibold uppercase tracking-[0.25em] {{ 'text-flame-200' if variant == 'light' else 'text-flame-700' }}">Handmade candles</span>
+  </span>
+</span>
+{%- endmacro %}

@@ -1,0 +1,3 @@
+{% extends "errors/error.html" %}
+{% block heading %}Something went wrong{% endblock %}
+{% block text %}{{ message or "An unexpected error occurred on our side. Please try again in a moment." }}{% endblock %}

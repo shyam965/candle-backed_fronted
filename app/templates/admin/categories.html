@@ -1,0 +1,9 @@
+{% extends "layouts/admin.html" %}
+{% from "components/ui.html" import page_header, skeleton_rows %}
+{% block admin_title %}Categories{% endblock %}
+{% block content %}
+{{ page_header("Categories", "Organise your candles into collections customers can browse.") }}
+<div id="category-panel" hx-get="/admin/categories/_table" hx-trigger="load" hx-swap="innerHTML">
+  <div class="card card-pad">{{ skeleton_rows(5) }}</div>
+</div>
+{% endblock %}

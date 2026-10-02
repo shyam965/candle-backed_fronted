@@ -1,0 +1,35 @@
+{% from "components/icons.html" import icon %}
+{% from "components/ui.html" import error_state %}
+<div id="dashboard-stats"{% if oob %} hx-swap-oob="true"{% endif %}>
+{% if stats_error %}
+  {{ error_state(stats_error, "/admin/_p/stats", "#dashboard-stats") }}
+{% else %}
+  <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+    {% for label, value, ic, note, tone in [
+      ("Products", summary.products, "package", "In your catalogue", "bg-royal-100 text-royal-800"),
+      ("Categories", summary.categories, "folder", "Collections", "bg-sky-100 text-sky-800"),
+      ("Total Orders", summary.orders, "receipt", "All time", "bg-amber-100 text-amber-800"),
+      ("Delivered Revenue", summary.revenue|inr, "rupee", "Only delivered orders", "bg-emerald-100 text-emerald-800"),
+    ] %}
+    <div class="card card-pad flex items-start justify-between gap-4">
+      <div>
+        <p class="text-sm text-royal-600">{{ label }}</p>
+        <p class="mt-1 font-display text-3xl font-bold">{{ value }}</p>
+        <p class="mt-1 text-xs text-royal-500">{{ note }}</p>
+      </div>
+      <span class="flex h-11 w-11 items-center justify-center rounded-xl {{ tone }}">{{ icon(ic) }}</span>
+    </div>
+    {% endfor %}
+  </div>
+  <h2 class="mt-8 font-display text-lg font-bold">Order Status</h2>
+  <div class="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-6">
+    {% for status, count in summary.status_counts.items() %}
+    {% set style = status_style(status) %}
+    <div class="card flex flex-col gap-2 p-4">
+      <span class="badge {{ style[0] }} w-fit">{{ icon(style[1], "h-3.5 w-3.5") }} {{ status }}</span>
+      <p class="font-display text-2xl font-bold">{{ count }}</p>
+    </div>
+    {% endfor %}
+  </div>
+{% endif %}
+</div>

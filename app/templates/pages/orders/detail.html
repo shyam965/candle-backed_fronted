@@ -1,0 +1,111 @@
+{% extends "layouts/site.html" %}
+{% from "components/icons.html" import icon %}
+{% from "components/ui.html" import image_or_placeholder %}
+{% from "components/status_pill.html" import status_pill %}
+{% block title %}Order {{ order.orderId }} — AK Royal Flames{% endblock %}
+{% block content %}
+{% set status = order_status(order) %}
+{% set cur = current_status(order) %}
+{% set c = order.customer or {} %}
+<section class="container-page max-w-5xl py-8 sm:py-12">
+  <div class="flex items-center gap-3">
+    <a href="/my-orders" class="icon-btn" aria-label="Back to My Orders">{{ icon("arrow-left") }}</a>
+    <div class="min-w-0">
+      <h1 class="text-3xl font-bold">Order Details</h1>
+      <p class="truncate text-sm text-royal-600">{{ order.orderId }}</p>
+    </div>
+  </div>
+
+  <div class="mt-6 grid gap-4 sm:grid-cols-2">
+    <div class="card card-pad">
+      <p class="text-sm text-royal-600">Current Status</p>
+      <div class="mt-2">{{ status_pill(status, "lg") }}</div>
+      <p class="mt-3 text-sm"><span class="text-royal-600">{{ cur[0] }}:</span> <span class="font-semibold">{{ cur[1]|datetime if cur[1] else "Not available" }}</span></p>
+    </div>
+    {% if status != "Cancelled" and order.expectedDelivery %}
+    <div class="card card-pad">
+      <p class="text-sm text-royal-600">Expected Delivery</p>
+      <p class="mt-2 font-display text-2xl font-bold">{{ order.expectedDelivery|date }}</p>
+    </div>
+    {% endif %}
+  </div>
+
+  {% if status == "Cancelled" %}
+  <div class="alert alert-error mt-4">{{ icon("x-circle", "h-5 w-5 shrink-0") }}
+    <div><p class="font-semibold">Order Cancelled</p><p>Cancelled on {{ order.statusDates.Cancelled|datetime if order.statusDates else "-" }}</p></div>
+  </div>
+  {% endif %}
+
+  <div class="card card-pad mt-6">
+    <h2 class="font-display text-xl font-bold">Tracking</h2>
+    {% set steps = tracking_steps(order) %}
+    <ol class="mt-6 flex flex-col gap-6 sm:flex-row sm:gap-0">
+      {% for step in steps %}
+      {% set done = step.state == "done" %}
+      {% set current = step.state in ("current", "cancelled") %}
+      <li class="relative flex gap-3 sm:flex-1 sm:flex-col sm:items-center sm:text-center"{% if current %} aria-current="step"{% endif %}>
+        {% if not loop.last %}
+        <span aria-hidden="true" class="absolute left-4 top-9 h-[calc(100%-1rem)] w-0.5 sm:left-1/2 sm:top-4 sm:h-0.5 sm:w-full {{ 'bg-emerald-500' if done else 'bg-cream-300' }}"></span>
+        {% endif %}
+        <span class="relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full ring-4 ring-white
+                     {{ 'bg-emerald-600 text-white' if done else ('bg-red-600 text-white' if step.state == 'cancelled' else ('bg-flame-700 text-white' if current else 'bg-cream-200 text-royal-500')) }}">
+          {% if done %}{{ icon("check", "h-4 w-4") }}{% elif step.state == "cancelled" %}{{ icon("x", "h-4 w-4") }}{% else %}<span class="text-xs font-bold">{{ loop.index }}</span>{% endif %}
+        </span>
+        <div class="sm:mt-3 sm:px-2">
+          <p class="text-sm font-semibold {{ 'text-royal-900' if done or current else 'text-royal-500' }}">{{ step.label }}</p>
+          <p class="text-xs text-royal-600">{{ step.date|datetime if step.date else "Pending" }}</p>
+          {% if step.tag %}<span class="badge badge-royal mt-1">{{ step.tag }}</span>{% endif %}
+        </div>
+      </li>
+      {% endfor %}
+    </ol>
+  </div>
+
+  <div class="mt-6 grid gap-6 lg:grid-cols-5">
+    <div class="card card-pad self-start lg:col-span-3">
+      <h2 class="font-display text-xl font-bold">Products</h2>
+      <ul class="mt-4 divide-y divide-cream-200">
+        {% for item in order["items"] %}
+        <li class="flex items-center gap-4 py-3">
+          <div class="h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-cream-200">{{ image_or_placeholder(item.image, item.name, ph_icon="package") }}</div>
+          <div class="min-w-0 flex-1">
+            <p class="font-semibold text-royal-900">{{ item.name }}</p>
+            <p class="text-xs text-royal-600">Qty: {{ item.quantity }}</p>
+            <p class="text-xs text-royal-600">{{ item.price|inr }} × {{ item.quantity }}</p>
+          </div>
+          <p class="font-semibold">{{ item.total|inr }}</p>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+    <div class="flex flex-col gap-6 lg:col-span-2">
+      <div class="card card-pad">
+        <h2 class="font-display text-xl font-bold">Delivery Details</h2>
+        <div class="mt-3 text-sm leading-relaxed text-royal-800">
+          <p class="font-semibold">{{ c.name }}</p>
+          <p>{{ c.mobile }}</p>
+          <p>{{ c.address }}</p>
+          <p>{{ c.city }}, {{ c.pincode }}</p>
+        </div>
+      </div>
+      <div class="card card-pad">
+        <h2 class="font-display text-xl font-bold">Order Summary</h2>
+        {% set ship = shipping_label(order) %}
+        <dl class="mt-4 flex flex-col gap-3 text-sm">
+          <div class="flex justify-between"><dt class="text-royal-600">Items Total</dt><dd class="font-semibold">{{ order.itemsTotal|inr }}</dd></div>
+          <div class="flex justify-between"><dt class="text-royal-600">Shipping</dt><dd class="font-semibold {{ 'text-emerald-700' if ship == 'FREE' else 'text-amber-700' }}">{{ ship }}</dd></div>
+        </dl>
+        {% if ship == "FREE" %}
+        <div class="alert alert-success mt-4">{{ icon("check-circle", "h-5 w-5 shrink-0") }}<p>FREE delivery applied to this order.</p></div>
+        {% else %}
+        <div class="alert alert-warning mt-4">{{ icon("truck", "h-5 w-5 shrink-0") }}<p>Actual delivery charges will be paid separately to the delivery person at the time of delivery.</p></div>
+        {% endif %}
+        <div class="mt-4 flex items-baseline justify-between border-t border-cream-300 pt-4">
+          <span class="font-semibold">Grand Total</span><span class="font-display text-2xl font-bold">{{ order.grandTotal|inr }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="mt-8 text-center"><a href="/my-orders" class="btn btn-outline">{{ icon("arrow-left", "h-4 w-4") }} Back to My Orders</a></div>
+</section>
+{% endblock %}
